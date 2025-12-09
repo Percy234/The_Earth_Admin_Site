@@ -7,7 +7,7 @@ function App() {
 
   return (
     <ChakraProvider value={defaultSystem}>
-      <ThemeProvider attribute="class" defaultTheme="light">
+      <ThemeProvider attribute="class" defaultTheme="dark">
         <RouterProvider router={router} />
       </ThemeProvider>
     </ChakraProvider>
