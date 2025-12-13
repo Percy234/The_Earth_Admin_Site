@@ -33,6 +33,8 @@ import KINGDOM_API from "../../services/kingdom.api";
 import { Toaster, toaster } from "../../components/ui/Toaster"
 import { Tooltip } from "../../components/ui/Tooltip";
 import TagList from "../../components/ui/TagList";
+
+
 export default function AddKingdomView() {
     const { theme } = useTheme();
     const [uploadFileKey, setUploadFileKey] = useState(Date.now());
@@ -47,6 +49,10 @@ export default function AddKingdomView() {
         description: "",
         thumbnail_url: null,
     });
+
+
+    //setup
+    document.title = "Admin | Thêm Giới Mới";
 
     //hooks
     useEffect(() => {
@@ -66,8 +72,8 @@ export default function AddKingdomView() {
         const message = checkFormValidity();
         if(message.length > 0){
             toaster.error({
-                title: "Form Invalid",
-                description: `Please fix the following errors:\n${message}`,
+                title: "Form không hợp lệ",
+                description: `Vui lòng sửa các lỗi sau:\n${message}`,
             });
             return;
         }
