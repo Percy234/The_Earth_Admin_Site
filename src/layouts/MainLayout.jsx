@@ -117,6 +117,7 @@ export default function MainLayout() {
                         borderColor={theme === 'dark' ? "gray.700" : "gray.200"}
                         >
                             <Sidebar links={[
+                                {name: "Quản lý các giới", path: "/kingdoms"},
                                 {name: "Thêm giới mới", path: "/kingdoms/add"}
                             ]} />
                         </Box>
