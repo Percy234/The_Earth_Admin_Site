@@ -1,21 +1,21 @@
 const provide_cell_types = (type) => {
-    if(type === 'P') return ['Prokaryotic'];
-    if(type === 'E') return ['Eukaryotic'];
-    if(type === 'B') return ['Prokaryotic', 'Eukaryotic'];
+    if(type === 'P') return ['Nhân sơ']; /// Prokaryotic
+    if(type === 'E') return ['Nhân thực']; // Eukaryotic
+    if(type === 'B') return ['Nhân sơ', 'Nhân thực']; // Hỗn hợp
     return [];
 }
 
 const provide_nutrition_types = (type) => {
-    if(type === 'A') return ['Autotrophic'];
-    if(type === 'H') return ['Heterotrophic'];
-    if(type === 'M') return ['Autotrophic', 'Heterotrophic'];
+    if(type === 'A') return ['Tự dưỡng']; // Autotrophic
+    if(type === 'H') return ['Ký sinh']; // Heterotrophic
+    if(type === 'M') return ['Tự dưỡng', 'Ký sinh']; // Hỗn hợp
     return [];
 }
 
 const provide_reproduction_types = (type) => {
-    if(type === 'A') return ['Asexual'];
-    if(type === 'S') return ['Sexual'];
-    if(type === 'B') return ['Asexual', 'Sexual'];
+    if(type === 'A') return ['Vô tính']; // Asexual
+    if(type === 'S') return ['Hữu tính']; // Sexual
+    if(type === 'B') return ['Vô tính', 'Hữu tính']; // Hỗn hợp
     return [];
 }
 

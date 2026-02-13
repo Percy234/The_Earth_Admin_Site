@@ -21,8 +21,8 @@ const KINGDOM_API = {
     uploadThumbnail: async (file) => {
         try {
             const formData = new FormData();
-            formData.append("kingdom-img", file);
-            const response = await axios.post(`${APP_CONFIG.BASE_API}/kingdoms/upload`, formData, {
+            formData.append("kingdom-thumbnail", file);
+            const response = await axios.post(`${APP_CONFIG.BASE_API}/kingdoms/upload-thumbnail`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -32,6 +32,20 @@ const KINGDOM_API = {
             console.log(error);
         }
     },
+    uploadBackground: async (file) => {
+        try {
+            const formData = new FormData();
+            formData.append("kingdom-background", file);
+            const response = await axios.post(`${APP_CONFIG.BASE_API}/kingdoms/upload-background`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            return response.data;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }
 
 export default KINGDOM_API;

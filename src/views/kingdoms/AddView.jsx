@@ -48,6 +48,8 @@ export default function AddKingdomView() {
         reproduction_type: "",
         description: "",
         thumbnail_url: null,
+        background_url: null,
+        theme_color: "",
     });
 
 
@@ -65,7 +67,7 @@ export default function AddKingdomView() {
     // ============== Handlers ===================
     const fetchAllKingdoms = async () => {
         const kingdoms = await KINGDOM_API.getAll();
-        console.log(kingdoms);
+        // console.log(kingdoms);
         setAllKingdoms(kingdoms.data);
     };
     const submitForm = async () => {
@@ -95,6 +97,8 @@ export default function AddKingdomView() {
                 reproduction_type: "",
                 description: "",
                 thumbnail_url: null,
+                background_url: null,
+                theme_color: "",
             });
             setTemplateImgUrl(null);
             setUploadFileKey(Date.now());
@@ -113,14 +117,20 @@ export default function AddKingdomView() {
     }
 
     //get files
-    const handleFileChange = (files) => {
+    const handleFileChange = (files, type) => {
         if(files  && files.acceptedFiles.length > 0){
             //lấy file đầu tiên
             const file = files.acceptedFiles[0];
-            //tạo URL tạm thời để hiển thị ảnh
-            setTemplateImgUrl(URL.createObjectURL(file));
-            //upload file lên server
-            uploadKingdomThumbnail(file);
+
+            if (type === "thumbnail") {
+                //tạo URL tạm thời để hiển thị ảnh
+                setTemplateImgUrl(URL.createObjectURL(file));
+                //upload file lên server
+                uploadKingdomThumbnail(file);
+            }
+            if (type === "background") {
+                uploadBackground(file);
+            }
         }
     }
 
@@ -132,13 +142,26 @@ export default function AddKingdomView() {
             description: res.message,
         });
         if(res.status === "success"){
-            setFormData({
-                ...formData,
+            setFormData((prev) => ({
+                ...prev,
                 thumbnail_url: res.data.filePath,
-            });
+            }));
         }
     }
 
+    const uploadBackground = async (file) => {
+        const res = await KINGDOM_API.uploadBackground(file);
+        toaster[res.status]({
+            title: res.title,
+            description: res.message,
+        });
+        if(res.status === "success"){
+            setFormData((prev) => ({
+                ...prev,
+                background_url: res.data.filePath,
+            }));
+        }
+    }
 
 
 
@@ -183,8 +206,9 @@ export default function AddKingdomView() {
                                         onChange={e => setFormData({...formData, cell_type: e.target.value})}>
                                             <option value={null}>Vui lòng chọn</option>
                                             <For each={[
-                                                { value: "P", label: "Prokaryotic" },
-                                                { value: "E", label: "Eukaryotic" },
+                                                { value: "P", label: "Nhân sơ" },
+                                                { value: "E", label: "Nhân thực" },
+                                                { value: "B", label: "Hỗn hợp" },
                                             ]}>
                                                 {(option, index) => (
                                                     <option key={index} value={option.value}>{option.label}</option>
@@ -217,7 +241,7 @@ export default function AddKingdomView() {
                             </GridItem>
                             <GridItem>
                                 <Field.Root>
-                                    <Field.Label>Chế độ sinh sản</Field.Label>
+                                    <Field.Label>Phương thức sinh sản</Field.Label>
                                     <NativeSelect.Root>
                                         <NativeSelect.Field
                                         value={formData.reproduction_type}
@@ -226,7 +250,7 @@ export default function AddKingdomView() {
                                             <For each={[
                                                 { value: "A", label: "Không hữu tính" },
                                                 { value: "S", label: "Hữu tính" },
-                                                { value: "B", label: "Cả hai" },
+                                                { value: "B", label: "Hỗn hợp" },
                                             ]}>
                                                 {(option, index) => (
                                                     <option key={index} value={option.value}>{option.label}</option>
@@ -236,10 +260,33 @@ export default function AddKingdomView() {
                                     </NativeSelect.Root>
                                 </Field.Root>
                             </GridItem>
+                            <GridItem>
+                                <Field.Root>
+                                    <Field.Label>Màu chủ đề</Field.Label>
+                                    <Input
+                                        type="color"
+                                        value={formData.theme_color}
+                                        cursor="pointer"
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, theme_color: e.target.value })
+                                        }
+                                        p="0"
+                                        h="40px"
+                                        sx={{
+                                            '&::-webkit-color-swatch-wrapper': {
+                                            padding: 0,
+                                            },
+                                            '&::-webkit-color-swatch': {
+                                            border: 'none',
+                                            },
+                                        }}
+                                    />
+                                </Field.Root>
+                            </GridItem>
                         </Grid>
                         <Field.Root>
                             <Field.Label>Mô tả</Field.Label>
-                            <Textarea value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} placeholder="Enter description" />
+                            <Textarea value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} placeholder="Nhập mô tả" />
                         </Field.Root>
                         <Field.Root>
                             <Field.Label>Ảnh đại diện giới</Field.Label>
@@ -247,7 +294,33 @@ export default function AddKingdomView() {
                             maxW="100%" 
                             alignItems="stretch" 
                             maxFiles={1}
-                            onFileChange={handleFileChange}
+                            onFileChange={(files) => handleFileChange(files, "thumbnail")}
+                            key={uploadFileKey}
+
+                            >
+                            <FileUpload.HiddenInput />
+                            <FileUpload.Dropzone
+                                h="120px"
+                                w="250px"
+                            >
+                                <Icon size="md" color="fg.muted">
+                                <LuUpload />
+                                </Icon>
+                                <FileUpload.DropzoneContent>
+                                <Box>Kéo và thả tệp vào đây</Box>
+                                <Box color="fg.muted">Kích thước đề xuất: 630 x 630  px</Box>
+                                </FileUpload.DropzoneContent>
+                            </FileUpload.Dropzone>
+                            <FileUpload.List />
+                            </FileUpload.Root>
+                        </Field.Root>
+                        <Field.Root>
+                            <Field.Label>Ảnh nền giới</Field.Label>
+                            <FileUpload.Root 
+                            maxW="100%" 
+                            alignItems="stretch" 
+                            maxFiles={1}
+                            onFileChange={(files) => handleFileChange(files, "background")}
                             key={uploadFileKey}
 
                             >
@@ -258,7 +331,7 @@ export default function AddKingdomView() {
                                 </Icon>
                                 <FileUpload.DropzoneContent>
                                 <Box>Kéo và thả tệp vào đây</Box>
-                                <Box color="fg.muted">.png, .jpg lên đến 5MB</Box>
+                                <Box color="fg.muted">Kích thước đề xuất: 1440 x 560 px</Box>
                                 </FileUpload.DropzoneContent>
                             </FileUpload.Dropzone>
                             <FileUpload.List />
@@ -298,22 +371,22 @@ export default function AddKingdomView() {
                                 )}
                             </GridItem>
                             <GridItem colSpan={3} p={2}>
-                                <Heading>{formData.normal_name || "Unnamed Kingdom"}</Heading>
+                                <Heading>{formData.normal_name || "Chưa có tên"}</Heading>
                                 <Tooltip
-                                content={formData.description || "No Scientific Name"}
+                                    content={formData.description || "Không có tên khoa học"}
                                 >
                                     <Text 
                                     fontStyle={"italic"}
                                     fontSize={12}
                                     color={theme === 'dark' ? "gray.400" : "gray.600"}
                                     lineClamp={2}
-                                    >{formData.description || "No Scientific Name"}
+                                    >{formData.description || "Không có mô tả nào cho giới này."}
                                     </Text>
                                 </Tooltip>
                                 <Box marginTop={4}>
-                                    <TagList tagName="Cell" items={provide_cell_types(formData.cell_type)} />
-                                    <TagList tagName="Nutrition" items={provide_nutrition_types(formData.nutrition_mode)} />
-                                    <TagList tagName="Reproduction" items={provide_reproduction_types(formData.reproduction_type)} />
+                                    <TagList tagName="Loại tế bào" items={provide_cell_types(formData.cell_type)} />
+                                    <TagList tagName="Chế độ dinh dưỡng" items={provide_nutrition_types(formData.nutrition_mode)} />
+                                    <TagList tagName="Phương thức sinh sản" items={provide_reproduction_types(formData.reproduction_type)} />
                                 </Box>
                             </GridItem>
                         </Grid>
