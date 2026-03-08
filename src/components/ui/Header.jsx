@@ -23,7 +23,7 @@ export default function DashboardHeader({ activeSection, onScrollTo }) {
                     onClick={() => onScrollTo('home')}
                 />
                 <NavItem 
-                    label="SƯU TẬP" 
+                    label="BỘ SƯU TẬP" 
                     isActive={activeSection === 'collection'} 
                     isLight={activeSection === 'home'}
                     activeColor="green.500"

@@ -45,6 +45,21 @@ const KINGDOM_API = {
         } catch (error) {
             console.log(error);
         }
+    },
+    uploadBlockImage: async (file) => {
+        try {
+            const formData = new FormData();
+            formData.append("kingdom-block-image", file);
+            const response = await axios.post(`${APP_CONFIG.BASE_API}/kingdoms/upload-block-image`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            return response.data;
+        } catch (error) {
+            console.log("Lỗi upload block image:", error);
+            throw error;
+        }
     }
 }
 

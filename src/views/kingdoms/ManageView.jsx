@@ -44,7 +44,7 @@ export default function ManageKingdoms() {
 
     return (
         <Box 
-        p="5%"
+            p="5%"
         >
             <Box
                 border={"1px solid"}
@@ -67,7 +67,7 @@ export default function ManageKingdoms() {
                     color: "transparent",
                 }}
                 >
-                Bộ sưu tập
+                    Bộ sưu tập
                 </h1>
                 <Text
                     fontSize={"4xl"}
@@ -77,7 +77,7 @@ export default function ManageKingdoms() {
                     textAlign={"center"}
                     color={"black"}
                 >
-                Quản lý các sinh vật trong hệ thống của The Earth.
+                    Quản lý các sinh vật trong hệ thống của The Earth.
                 </Text>
             </Box>
             
@@ -135,7 +135,7 @@ export default function ManageKingdoms() {
                             onClick={() => navigate("/kingdoms/add")}
                         >
                             <Box
-                                bg={"#c3b4b4"}
+                                bg={"#161433"}
                                 w="88%"
                                 h="320px"
                                 borderRadius={4}
