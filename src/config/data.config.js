@@ -7,8 +7,8 @@ const provide_cell_types = (type) => {
 
 const provide_nutrition_types = (type) => {
     if(type === 'A') return ['Tự dưỡng']; // Autotrophic
-    if(type === 'H') return ['Ký sinh']; // Heterotrophic
-    if(type === 'M') return ['Tự dưỡng', 'Ký sinh']; // Hỗn hợp
+    if(type === 'H') return ['Dị dưỡng']; // Heterotrophic
+    if(type === 'M') return ['Tự dưỡng', 'Dị dưỡng']; // Hỗn hợp
     return [];
 }
 

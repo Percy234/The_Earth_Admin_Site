@@ -47,14 +47,14 @@ export default function AddKingdomView() {
         background_url: null,
         theme_color: "",
     });
-
+    const textColor = getContrastColor(formData.theme_color);
     //setup
     document.title = "Admin | Thêm Giới Mới";
 
     //hooks
     useEffect(() => {
         fetchAllKingdoms();
-    }, [uploadFileKey]);
+    }, []);
 
     // ============== Handlers ===================
     const fetchAllKingdoms = async () => {
@@ -100,7 +100,11 @@ export default function AddKingdomView() {
     const checkFormValidity = () => {
         let message = "";
         for(let key in formData){
-            if(!formData[key] || formData[key].length === 0){
+            if (
+                formData[key] === null ||
+                formData[key] === "" ||
+                (Array.isArray(formData[key]) && formData[key].length === 0)
+            ) {
                 message = `- ${key} is required.\n`;
                 break;
             }
@@ -193,6 +197,8 @@ export default function AddKingdomView() {
     }
     // Hàm kiểm tra màu sáng hay tối
     function getContrastColor(hex) {
+        if (!hex) return "#FFFFFF";
+
         hex = hex.replace("#", "");
 
         const r = parseInt(hex.substring(0, 2), 16);
@@ -347,7 +353,7 @@ export default function AddKingdomView() {
                                     <Input
                                         id={`image-${index}`}
                                         type="file"
-                                        accept="image/"
+                                        accept="image/*"
                                         display="none"
                                         onChange={async (e) => {
                                             const file = e.target.files?.[0];
@@ -502,7 +508,7 @@ export default function AddKingdomView() {
                                     <Input
                                         id={`image-${index}`}
                                         type="file"
-                                        accept="image/"
+                                        accept="image/*"
                                         display="none"
                                         onChange={async (e) => {
                                             const file = e.target.files?.[0];
@@ -601,7 +607,7 @@ export default function AddKingdomView() {
                                         accept="image/*"
                                         display="none"
                                         onChange={async (e) => {
-                                            const file = e.target.file?.[0]
+                                            const file = e.target.files?.[0]
                                             if (!file) return;
 
                                             const previewUrl = URL.createObjectURL(file);
@@ -671,7 +677,17 @@ export default function AddKingdomView() {
     const bgInputRef = useRef(null);
     const thumbInputRef = useRef(null);
     const [templateBgUrl, setTemplateBgUrl] = useState(null);
-    const textColor = getContrastColor(formData.theme_color);
+    const [openSelect, setOpenSelect] = useState(null);
+    const cellOptions = [
+        { value: "P", label: "Nhân sơ" },
+        { value: "E", label: "Nhân thực" },
+        { value: "B", label: "Hỗn hợp" }
+    ];
+    const nutritionOptions = [
+        {value: "A", label: "Tự dưỡng"},
+        {value: "H", label: "Dị dưỡng"},
+        {value: "M", label: "Hỗn hợp"}
+    ]
 
     return(
         <Box
@@ -836,6 +852,150 @@ export default function AddKingdomView() {
                     />
                 </Box>
             </Box>
+
+            {/* Taxonomic Criteria (tiêu chí phân loại) */}
+            <Box
+                w="100%"
+                h="200px"
+                bg="black"
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+            >
+                <Grid
+                    templateColumns="repeat(5, 1fr)"
+                >
+                    <GridItem
+                        colSpan={1}
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="center"
+                        position="relative"
+                    >
+                        <Text
+                            fontSize="24px"
+                            color="white"
+                            fontWeight="bold"
+                            cursor="pointer"
+                            onClick={() => setOpenSelect(openSelect === "cell" ? null : "cell")}
+                        >
+                            Loại Tế Bào
+                        </Text>
+                        {formData.cell_type && (
+                            <Text color="#A1A1AA" mt="6px">
+                                {cellOptions.find(o => o.value === formData.cell_type)?.label}
+                            </Text>
+                        )}
+                        {openSelect === "cell" && (
+                            <Box
+                                position="absolute"
+                                top="70px"
+                                bg="white"
+                                borderRadius="8px"
+                                overflow="hidden"
+                                zIndex="1000"
+                                boxShadow="0 8px 20px rgba(0,0,0,0.4)"
+                                minW="160px"
+                            >
+                                {cellOptions.map((option) => (
+                                    <Box
+                                        key={option.value}
+                                        px="16px"
+                                        py="8px"
+                                        color="black"
+                                        cursor="pointer"
+                                        _hover={{ bg: "black", color: "white" }}
+                                        onClick={() => {
+                                            setFormData({ ...formData, cell_type: option.value });
+                                            setOpenSelect(null);
+                                        }}
+                                    >
+                                        {option.label}
+                                    </Box>
+                                ))}
+                            </Box>
+                        )}
+                    </GridItem>
+                    <GridItem
+                        colSpan={1}
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="center"
+                        position="relative"
+                    >
+                        <Text
+                            fontSize="24px"
+                            fontWeight="bold"
+                            color="white"
+                            cursor="pointer"
+                            onClick={() => setOpenSelect(openSelect === "nutrition" ? null : "nutrition")}
+                        >
+                            Loại Dinh Dưỡng
+                        </Text>
+                        {formData.nutrition_mode && (
+                            <Text color="#A1A1AA" mt="6px">
+                                {nutritionOptions.find(o => o.value === formData.nutrition_mode)?.label}
+                            </Text>
+                        )}
+                        {openSelect === "nutrition" && (
+                            <Box
+                                position="absolute"
+                                top="70px"
+                                bg="white"
+                                borderRadius="8px"
+                                overflow="hidden"
+                                zIndex="1000"
+                                boxShadow="0 8px 20px rgba(0, 0, 0, 0.4)"
+                                minW="160px"
+                            >
+                                {nutritionOptions.map((option) => (
+                                    <Box
+                                        key={option.value}
+                                        px="16px"
+                                        py="8px"
+                                        color="black"
+                                        cursor="pointer"
+                                        _hover={{ bg: "black", color: "white" }}
+                                        onClick={() => {
+                                            setFormData({ ...formData, nutrition_mode: option.value });
+                                            setOpenSelect(null);
+                                        }}
+                                    >
+                                        {option.label}
+                                    </Box>
+                                ))}
+                            </Box>
+                        )}
+                    </GridItem>
+                    <GridItem
+                        colSpan={1}
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="center"
+                    >
+                        <Text
+                            fontSize={"24px"}
+                            color={"white"}
+                            fontWeight={"bold"}
+                        >
+                            Loại sinh sản
+                        </Text>
+                        <select
+                            style={{ marginTop: "16px", width: "80%", padding: "6px", color: "#FFFFFF", backgroundColor: "#09090B" }}
+                            value={formData.reproduction_type}
+                            onChange={(e) =>
+                                setFormData({ ...formData, reproduction_type: e.target.value })
+                            }
+                        >
+                            <option value="">Chọn loại sinh sản</option>
+                            <option value="A">Sinh sản hữu tính</option>
+                            <option value="B">Sinh sản vô tính</option>
+                            <option value="AB">Cả sinh sản hữu tính và vô tính</option>
+                        </select>
+                    </GridItem>
+                </Grid>
+            </Box>
+
             {/* Content */}
             <Box
                 w="100%"
