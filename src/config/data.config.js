@@ -1,26 +1,19 @@
-const provide_cell_types = (type) => {
-    if(type === 'P') return ['Nhân sơ']; /// Prokaryotic
-    if(type === 'E') return ['Nhân thực']; // Eukaryotic
-    if(type === 'B') return ['Nhân sơ', 'Nhân thực']; // Hỗn hợp
-    return [];
-}
+export const TAXONOMY_OPTIONS = {
+    cell: [
+        { value: "P", label: "Nhân sơ" },
+        { value: "E", label: "Nhân thực" },
+        { value: "B", label: "Hỗn hợp" }
+    ],
 
-const provide_nutrition_types = (type) => {
-    if(type === 'A') return ['Tự dưỡng']; // Autotrophic
-    if(type === 'H') return ['Dị dưỡng']; // Heterotrophic
-    if(type === 'M') return ['Tự dưỡng', 'Dị dưỡng']; // Hỗn hợp
-    return [];
-}
+    nutrition: [
+        { value: "A", label: "Tự dưỡng" },
+        { value: "H", label: "Dị dưỡng" },
+        { value: "M", label: "Hỗn hợp" }
+    ],
 
-const provide_reproduction_types = (type) => {
-    if(type === 'A') return ['Vô tính']; // Asexual
-    if(type === 'S') return ['Hữu tính']; // Sexual
-    if(type === 'B') return ['Vô tính', 'Hữu tính']; // Hỗn hợp
-    return [];
-}
-
-export {
-    provide_cell_types,
-    provide_nutrition_types,
-    provide_reproduction_types
-}
+    reproduction: [
+        { value: "A", label: "Vô tính" },
+        { value: "S", label: "Hữu tính" },
+        { value: "B", label: "Hỗn hợp" }
+    ]
+};

@@ -134,12 +134,14 @@
 import { Outlet } from 'react-router-dom'
 import { Box } from '@chakra-ui/react'
 import ScrollToTop from '../components/ui/ScrollToTop'
+import { Toaster } from '../components/ui/Toaster';
 
 export default function MainLayout() {
     return (
         <Box>
             <ScrollToTop/>
             <Outlet />
+            <Toaster />
         </Box>
     )
 }

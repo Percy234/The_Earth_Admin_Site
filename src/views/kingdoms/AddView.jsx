@@ -3,6 +3,7 @@ import {
     Button,
     Input,
     NativeSelect,
+    Image,
     Stack,
     VStack,
     Grid,
@@ -17,16 +18,13 @@ import { LuUpload } from "react-icons/lu"
 import { useTheme } from "next-themes";
 
 //method
-import {
-    provide_cell_types,
-    provide_nutrition_types,
-    provide_reproduction_types
-} from "../../config/data.config";
+import { TAXONOMY_OPTIONS } from "../../config/data.config";
 
 //api
 import KINGDOM_API from "../../services/kingdom.api";
 
 //components
+import BlockFormKingdom from "../../components/form/BlockFormKingdom";
 import { Toaster, toaster } from "../../components/ui/Toaster"
 import { Tooltip } from "../../components/ui/Tooltip";
 import TagList from "../../components/ui/TagList";
@@ -49,10 +47,11 @@ export default function AddKingdomView() {
     });
     const textColor = getContrastColor(formData.theme_color);
     //setup
-    document.title = "Admin | Thêm Giới Mới";
+    
 
     //hooks
     useEffect(() => {
+        document.title = "Admin | Thêm Giới Mới";
         fetchAllKingdoms();
     }, []);
 
@@ -63,54 +62,73 @@ export default function AddKingdomView() {
         setAllKingdoms(kingdoms.data);
     };
     const submitForm = async () => {
+
         const message = checkFormValidity();
-        if(message.length > 0){
-            toaster.error({
+        if (message.length > 0) {
+            console.warn("Validation failed:", message);
+            
+            const errorConfig = {
                 title: "Form không hợp lệ",
-                description: `Vui lòng sửa các lỗi sau:\n${message}`,
-            });
+                description: message,
+                type: "error",
+            };
+
+            if (toaster.error) toaster.error(errorConfig);
+            else toaster.create(errorConfig);
+            
             return;
         }
-        console.log(formData);
-        //submit form data to server 
-        const res = await KINGDOM_API.createKingdom(formData)
-        toaster[res.status]({
-            title: res.title,
-            description: res.message,
-        })
 
-        //reset form if success
-        if(res.status === "success"){
-            setFormData({
-                normal_name: "",
-                science_name: "",
-                cell_type: "",
-                nutrition_mode: "",
-                reproduction_type: "",
-                description: [],
-                thumbnail_url: null,
-                background_url: null,
-                theme_color: "",
+        try {
+            console.log("Sending data:", formData);
+            const res = await KINGDOM_API.createKingdom(formData);
+
+            toaster.create({
+            title: res.title || (res.status === "success" ? "Thành công" : "Lỗi"),
+            description: res.message,
+            type: res.status === "success" ? "success" : "error",
             });
-            setTemplateImgUrl(null);
-            setUploadFileKey(Date.now());
+
+            if (res.status === "success") {
+                setFormData({
+                    normal_name: "",
+                    science_name: "",
+                    cell_type: "",
+                    nutrition_mode: "",
+                    reproduction_type: "",
+                    description: [],
+                    thumbnail_url: null,
+                    background_url: null,
+                    theme_color: "",
+                });
+                setTemplateImgUrl(null);
+                setTemplateBgUrl?.(null);
+                setUploadFileKey(Date.now());
+            }
+        } catch (error) {
+            console.error("Submit Error:", error);
+            const failConfig = {
+                title: "Lỗi hệ thống",
+                description: "Không thể kết nối đến máy chủ.",
+                type: "error"
+            };
+            if (toaster.error) toaster.error(failConfig);
+            else toaster.create(failConfig);
         }
-    }
+    };
 
     const checkFormValidity = () => {
-        let message = "";
-        for(let key in formData){
-            if (
-                formData[key] === null ||
-                formData[key] === "" ||
-                (Array.isArray(formData[key]) && formData[key].length === 0)
-            ) {
-                message = `- ${key} is required.\n`;
-                break;
-            }
-        }
-        return message;
-    }
+        let errors = [];
+        
+        if (!formData.normal_name?.trim()) errors.push("Tên thường gọi");
+        if (!formData.science_name?.trim()) errors.push("Tên khoa học");
+        if (!formData.cell_type) errors.push("Loại tế bào");
+        if (!formData.nutrition_mode) errors.push("Chế độ dinh dưỡng");
+        if (!formData.reproduction_type) errors.push("Hình thức sinh sản");
+        // if (formData.description.length === 0) errors.push("Nội dung mô tả");
+
+        return errors.length > 0 ? `- ${errors.join("\n- ")}` : "";
+    };
 
     //get files
     const handleFileChange = (files, type) => {
@@ -209,485 +227,12 @@ export default function AddKingdomView() {
 
         return brightness > 155 ? "#0F0F0F" : "#FFFFFF";
     }
-    const renderBlockForm = (block, index) => {
-        const colorsBlockId = `color-block-${index}`; 
-
-        switch(block.block_type){
-            case "standard":
-                return (
-                    <Box
-                        w="100%"
-                        minH="90vh"
-                        bg={block.bg_color || "#FFFFFF"}
-                        cursor="pointer"
-                        onClick={() => document.getElementById(colorsBlockId)?.click()}
-                    >
-                        
-                        <Input
-                            id={colorsBlockId}
-                            type="color"
-                            value={block.bg_color || "#FFFFFF"}
-                            onChange={(e) => updateBlockData(index, "bg_color", e.target.value)}
-                            display="none"
-                        />
-                        <Box
-                            w="80%"
-                            onClick={(e) => e.stopPropagation()}
-                            mx="auto"
-                            pt="80px"
-                        >
-                            <Input
-                                value={block.heading}
-                                onChange={(e) => updateBlockData(index, "heading", e.target.value)}
-                                placeholder="Nhập tiêu đề"
-                                _placeholder={{
-                                    color: "#0F0F0F",
-                                    fontWeight: "bold"
-                                }}
-                                color={"#0F0F0F"}
-                                fontWeight="bold"
-                                textAlign="center"
-                                fontSize={{ base: "24px", md: "24px", lg: "40px" }}
-                                variant="unstyled"
-                                w={"100%"}
-                                h="80px"
-                                px={{ base: "24px", md: "50px", lg: "120px" }}
-                                py={4}
-                                fontStyle={"italic"}
-                            />
-                        </Box>
-                        <Box
-                            w="80%"
-                            mt="30px"
-                            mx="auto"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <Textarea
-                                value={block.content}
-                                onChange={(e) => {
-                                    e.target.style.height = "auto";
-                                    e.target.style.height = e.target.scrollHeight + "px";
-                                    updateBlockData(index, "content", e.target.value);
-                                }}
-                                placeholder="Nhập nội dung"
-                                color="#4B4B4B"
-                                textAlign={"center"}
-                                _placeholder={{ color: "gray.400" }}
-                                fontSize={{ base: "16px", md: "18px", lg: "24px" }}
-                                variant="unstyled"
-                                lineHeight="1.8"
-                                w="100%"
-                                minH="200px"
-                                h="auto"
-                                resize="none"
-                                px={{ base: "24px", md: "50px", lg: "120px" }}
-                                py={4}
-                            />
-                        </Box>
-                    </Box>
-                );
-            case "image_left":
-                return (
-                    <Box
-                        w="100%"
-                        minH="90vh"
-                        bg={block.bg_color || "#FFFFFF"}
-                        cursor="pointer"
-                        onClick={() => document.getElementById(colorsBlockId)?.click()}
-                    >
-                        <Input
-                            id={colorsBlockId}
-                            type="color"
-                            value={block.bg_color || "#FFFFFF"}
-                            onChange={(e) => updateBlockData(index, "bg_color", e.target.value)}
-                            display="none"
-                        />
-                        <Box
-                            w="80%"
-                            pt="80px"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <Input
-                                value={block.heading}
-                                onChange={(e) => updateBlockData(index, "heading", e.target.value)}
-                                placeholder="Nhập tiêu đề"
-                                _placeholder={{
-                                    color: "#0F0F0F",
-                                    fontWeight: "bold"
-                                }}
-                                color={"#0F0F0F"}
-                                fontWeight="bold"
-                                fontSize={{ base: "24px", md: "24px", lg: "40px" }}
-                                variant="unstyled"
-                                w="100%"
-                                h="80px"
-                                px={{ base: "24px", md: "50px", lg: "120px" }}
-                                py={4}
-                                ml="60px"
-                                fontStyle={"italic"}
-                            />
-                        </Box>
-                        <Grid
-                            templateColumns={"repeat(14, 1fr)"}
-                            gap={6}
-                            w="80%"
-                            mt="30px"
-                            mx="auto"
-                            pb="100px"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <GridItem
-                                colSpan={{ base: 14, lg: 9 }}
-                            >
-                                <Box
-                                    position="relative"
-                                    w="100%"
-                                    aspectRatio={16 / 9}
-                                    overflow="hidden"
-                                    cursor="pointer"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        document.getElementById(`image-${index}`)?.click();
-                                    }}
-                                >
-                                    <Input
-                                        id={`image-${index}`}
-                                        type="file"
-                                        accept="image/*"
-                                        display="none"
-                                        onChange={async (e) => {
-                                            const file = e.target.files?.[0];
-                                            if (!file) return;
-
-                                            const previewUrl = URL.createObjectURL(file);
-                                            updateBlockData(index, "img_url", previewUrl); 
-
-                                            const res = await KINGDOM_API.uploadBlockImage(file);
-                                            if (res.status === "success") {
-                                                updateBlockData(index, "img_url", res.data.filePath);
-                                            }
-                                        }}
-                                    />
-                                {block.img_url ? (
-                                    <Box
-                                        as="img"
-                                        src={block.img_url}
-                                        alt=""
-                                        w="100%"
-                                        h="100%"
-                                        objectFit="cover"
-                                    />
-                                    ) : (
-                                    <Box
-                                        w="100%"
-                                        h="100%"
-                                        bg="gray.200"
-                                        display="flex"
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        fontSize="18px"
-                                        color="gray.500"
-                                    >
-                                        Nhấn để chọn ảnh
-                                    </Box>
-                                    )
-                                }
-                                </Box>
-                            </GridItem>
-                            <GridItem
-                                colSpan={{ base: 14, lg: 5 }}
-                            >
-                                <Textarea
-                                    value={block.content}
-                                    onChange={(e) => {
-                                        e.target.style.height = "auto";
-                                        e.target.style.height = e.target.scrollHeight + "px";
-                                        updateBlockData(index, "content", e.target.value);
-                                    }}
-                                    color="#4B4B4B"
-                                    placeholder="Nhập nội dung"
-                                    variant="unstyled"
-                                    resize="none"
-                                    fontSize={{ base: "16px", md: "18px", lg: "24px" }}
-                                    lineHeight="1.8"
-                                    w="100%"
-                                    h="auto"
-                                    minH="200px"
-                                />
-                            </GridItem>
-                        </Grid>
-                    </Box>
-                );
-            case "image_right":
-                return (
-                    <Box
-                        w="100%"
-                        minH="90vh"
-                        bg={block.bg_color || "#FFFFFF"}
-                        cursor="pointer"
-                        onClick={() => document.getElementById(colorsBlockId)?.click()}
-                    >
-                        <Input
-                            id={colorsBlockId}
-                            type="color"
-                            value={block.bg_color || "#FFFFFF"}
-                            onChange={(e) => updateBlockData(index, "bg_color", e.target.value)}
-                            display="none"
-                        />
-                        <Box
-                            w="80%"
-                            pt="80px"
-                            ml="auto"
-                            mr={"70px"}
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <Input
-                                value={block.heading}
-                                onChange={(e) => updateBlockData(index, "heading", e.target.value)}
-                                placeholder="Nhập tiêu đề"
-                                _placeholder={{
-                                    color: "#0F0F0F",
-                                    fontWeight: "bold"
-                                }}
-                                color="#0F0F0F"
-                                fontWeight="bold"
-                                fontSize={{ base: "24px", md: "24px", lg: "40px" }}
-                                variant="unstyled"
-                                w="100%"
-                                h="80px"
-                                fontStyle={"italic"}
-                                textAlign="right"
-                                px={{ base: "24px", md: "50px", lg: "120px" }}
-                                py={4}
-                            />
-                        </Box>
-                        <Grid
-                            templateColumns={"repeat(14, 1fr)"}
-                            gap={6}
-                            w="80%"
-                            mt="30px"
-                            mx="auto"
-                            pb="100px"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <GridItem
-                                colSpan={{ base: 14, lg: 5 }}
-                            >
-                                <Textarea
-                                    value={block.content}
-                                    onChange={(e) => {
-                                        e.target.style.height = "auto";
-                                        e.target.style.height = e.target.scrollHeight + "px";
-                                        updateBlockData(index, "content", e.target.value);
-                                    }}
-                                    color="#4B4B4B"
-                                    placeholder="Nhập nội dung"
-                                    variant="unstyled"
-                                    resize="none"
-                                    fontSize={{ base: "16px", md: "18px", lg: "24px" }}
-                                    lineHeight="1.8"
-                                    w="100%"
-                                    h="auto"
-                                    minH="200px"
-                                />
-                            </GridItem>
-                            <GridItem
-                                colSpan={{ base: 14, lg: 9 }}
-                            >
-                                <Box
-                                    position="relative"
-                                    w="100%"
-                                    aspectRatio={16 / 9}
-                                    overflow="hidden"
-                                    cursor="pointer"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        document.getElementById(`image-${index}`)?.click();
-                                    }}
-                                >
-                                    <Input
-                                        id={`image-${index}`}
-                                        type="file"
-                                        accept="image/*"
-                                        display="none"
-                                        onChange={async (e) => {
-                                            const file = e.target.files?.[0];
-                                            if (!file) return;
-
-                                            const previewUrl = URL.createObjectURL(file);
-                                            updateBlockData(index, "img_url", previewUrl); 
-
-                                            const res = await KINGDOM_API.uploadBlockImage(file);
-                                            if (res.status === "success") {
-                                                updateBlockData(index, "img_url", res.data.filePath);
-                                            }
-                                        }}
-                                    />
-                                {block.img_url ? (
-                                    <Box
-                                        as="img"
-                                        src={block.img_url}
-                                        alt=""
-                                        w="100%"
-                                        h="100%"
-                                        objectFit="cover"
-                                    />
-                                    ) : (
-                                    <Box
-                                        w="100%"
-                                        h="100%"
-                                        bg="gray.200"
-                                        display="flex"
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        fontSize="18px"
-                                        color="gray.500"
-                                    >
-                                        Nhấn để chọn ảnh
-                                    </Box>
-                                    )
-                                }
-                                </Box>
-                            </GridItem>
-                        </Grid>
-                    </Box>
-                );
-            case "image_top":
-                return (
-                    <Box
-                        w="100%"
-                        minH="90vh"
-                        bg={formData.theme_color || "#161433"}  
-                    >
-                        <Box
-                            w="100%"
-                            pt="80px"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <Input
-                                value={block.heading}
-                                onChange={(e) => updateBlockData(index, "heading", e.target.value)}
-                                placeholder="Nhập tiêu đề"
-                                _placeholder={{
-                                    color: textColor,
-                                    fontWeight: "bold"
-                                }}
-                                color={textColor}
-                                fontWeight="bold"
-                                fontSize={{ base: "24px", md: "24px", lg: "40px" }}
-                                variant="unstyled"
-                                w="100%"
-                                h="80px"
-                                px={{ base: "24px", md: "50px", lg: "120px" }}
-                                py={4}
-                                fontStyle="italic"
-                                mx={"auto"}
-                            />
-                        </Box>
-                        <Grid
-                            templateColumns="1fr"
-                            w="70%"
-                            mx="auto"
-                            mt="30px"
-                            pb="100px"
-                            gap={8}
-                        >
-                            <GridItem>
-                                <Box
-                                    w="100%"
-                                    aspectRatio={16 / 9}
-                                    overflow="hidden"
-                                    cursor="pointer"
-                                    borderRadius={"sm"}
-                                    onClick={() => document.getElementById(`image-${index}`)?.click()}
-                                >
-                                    <Input
-                                        id={`image-${index}`}
-                                        type="file"
-                                        accept="image/*"
-                                        display="none"
-                                        onChange={async (e) => {
-                                            const file = e.target.files?.[0]
-                                            if (!file) return;
-
-                                            const previewUrl = URL.createObjectURL(file);
-                                            updateBlockData(index, "img_url", previewUrl); 
-
-                                            const res = await KINGDOM_API.uploadBlockImage(file);
-                                            if (res.status === "success") {
-                                                updateBlockData(index, "img_url", res.data.filePath);
-                                            }
-                                        }}
-                                    />
-                                {block.img_url ? (
-                                    <Box
-                                        as="img"
-                                        src={block.img_url}
-                                        alt=""
-                                        w="100%"
-                                        h="100%"
-                                        objectFit="cover"
-                                    />
-                                    ) : (
-                                    <Box
-                                        w="100%"
-                                        h="100%"
-                                        bg="gray.200"
-                                        display="flex"
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        fontSize="18px"
-                                        color="gray.500"
-                                    >
-                                        Nhấn để chọn ảnh
-                                    </Box>
-                                    )
-                                }
-                                </Box>
-                            </GridItem>
-                            <GridItem>
-                                <Textarea
-                                    value={block.content}
-                                    onChange={(e) => {
-                                        e.target.style.height = "auto";
-                                        e.target.style.height = e.target.scrollHeight + "px";
-                                        updateBlockData(index, "content", e.target.value);
-                                    }}
-                                    color={textColor}
-                                    placeholder="Nhập nội dung"
-                                    variant="unstyled"
-                                    resize="none"
-                                    fontSize={{ base: "16px", md: "18px", lg: "24px" }}
-                                    lineHeight="1.8"
-                                    w="100%"
-                                    h="auto"
-                                    minH="200px"
-                                />
-                            </GridItem>
-                        </Grid>
-                    </Box>
-                );
-            default:
-                return null;
-        }
-        
-    }
 
     const colorInputRef = useRef(null);
     const bgInputRef = useRef(null);
     const thumbInputRef = useRef(null);
     const [templateBgUrl, setTemplateBgUrl] = useState(null);
     const [openSelect, setOpenSelect] = useState(null);
-    const cellOptions = [
-        { value: "P", label: "Nhân sơ" },
-        { value: "E", label: "Nhân thực" },
-        { value: "B", label: "Hỗn hợp" }
-    ];
-    const nutritionOptions = [
-        {value: "A", label: "Tự dưỡng"},
-        {value: "H", label: "Dị dưỡng"},
-        {value: "M", label: "Hỗn hợp"}
-    ]
 
     return(
         <Box
@@ -856,17 +401,18 @@ export default function AddKingdomView() {
             {/* Taxonomic Criteria (tiêu chí phân loại) */}
             <Box
                 w="100%"
-                h="200px"
                 bg="black"
-                display="flex"
-                flexDirection="column"
-                justifyContent="center"
             >
                 <Grid
-                    templateColumns="repeat(5, 1fr)"
+                    minH="200px"
+                    mx="30px"
+                    my="30px"
+                    alignItems="center"
+                    templateColumns={{ base: "1fr", md: "repeat(5, 1fr)" }}
+                    gap={6}
                 >
                     <GridItem
-                        colSpan={1}
+                        colSpan={{ base: 5, md: 1 }}
                         display="flex"
                         flexDirection="column"
                         alignItems="center"
@@ -877,13 +423,20 @@ export default function AddKingdomView() {
                             color="white"
                             fontWeight="bold"
                             cursor="pointer"
+                            display="flex"
+                            alignItems="center"
+                            gap="8px"
                             onClick={() => setOpenSelect(openSelect === "cell" ? null : "cell")}
                         >
+                            <Image 
+                                src="/backgrounds/home/cell.png"
+                                boxSize="50px"
+                            />
                             Loại Tế Bào
                         </Text>
                         {formData.cell_type && (
                             <Text color="#A1A1AA" mt="6px">
-                                {cellOptions.find(o => o.value === formData.cell_type)?.label}
+                                {TAXONOMY_OPTIONS.cell.find(o => o.value === formData.cell_type)?.label}
                             </Text>
                         )}
                         {openSelect === "cell" && (
@@ -897,7 +450,7 @@ export default function AddKingdomView() {
                                 boxShadow="0 8px 20px rgba(0,0,0,0.4)"
                                 minW="160px"
                             >
-                                {cellOptions.map((option) => (
+                                {TAXONOMY_OPTIONS.cell.map((option) => (
                                     <Box
                                         key={option.value}
                                         px="16px"
@@ -917,7 +470,7 @@ export default function AddKingdomView() {
                         )}
                     </GridItem>
                     <GridItem
-                        colSpan={1}
+                        colSpan={{ base: 5, md: 1 }}
                         display="flex"
                         flexDirection="column"
                         alignItems="center"
@@ -928,13 +481,20 @@ export default function AddKingdomView() {
                             fontWeight="bold"
                             color="white"
                             cursor="pointer"
+                            display="flex"
+                            alignItems="center"
+                            gap="8px"
                             onClick={() => setOpenSelect(openSelect === "nutrition" ? null : "nutrition")}
                         >
+                            <Image
+                                src="/backgrounds/home/nutrition.png"
+                                boxSize="50px"
+                            />
                             Loại Dinh Dưỡng
                         </Text>
                         {formData.nutrition_mode && (
                             <Text color="#A1A1AA" mt="6px">
-                                {nutritionOptions.find(o => o.value === formData.nutrition_mode)?.label}
+                                {TAXONOMY_OPTIONS.nutrition.find(o => o.value === formData.nutrition_mode)?.label}
                             </Text>
                         )}
                         {openSelect === "nutrition" && (
@@ -948,7 +508,7 @@ export default function AddKingdomView() {
                                 boxShadow="0 8px 20px rgba(0, 0, 0, 0.4)"
                                 minW="160px"
                             >
-                                {nutritionOptions.map((option) => (
+                                {TAXONOMY_OPTIONS.nutrition.map((option) => (
                                     <Box
                                         key={option.value}
                                         px="16px"
@@ -968,30 +528,74 @@ export default function AddKingdomView() {
                         )}
                     </GridItem>
                     <GridItem
-                        colSpan={1}
+                        colSpan={{ base: 5, md: 1 }}
                         display="flex"
                         flexDirection="column"
                         alignItems="center"
+                        position="relative"
                     >
                         <Text
-                            fontSize={"24px"}
-                            color={"white"}
-                            fontWeight={"bold"}
+                            fontSize="24px"
+                            fontWeight="bold"
+                            cursor="pointer"
+                            color="white"
+                            display="flex"
+                            alignItems="center"
+                            gap="8px"
+                            onClick={() => setOpenSelect(openSelect === "reproduction" ? null : "reproduction")}
                         >
-                            Loại sinh sản
+                            <Image
+                                src="/backgrounds/home/reproduction.png"
+                                boxSize="50px"
+                            />
+                            Loại Sinh Sản
                         </Text>
-                        <select
-                            style={{ marginTop: "16px", width: "80%", padding: "6px", color: "#FFFFFF", backgroundColor: "#09090B" }}
-                            value={formData.reproduction_type}
-                            onChange={(e) =>
-                                setFormData({ ...formData, reproduction_type: e.target.value })
-                            }
-                        >
-                            <option value="">Chọn loại sinh sản</option>
-                            <option value="A">Sinh sản hữu tính</option>
-                            <option value="B">Sinh sản vô tính</option>
-                            <option value="AB">Cả sinh sản hữu tính và vô tính</option>
-                        </select>
+                        {formData.reproduction_type && (
+                            <Text color="#A1A1AA" mt="6px">
+                            {TAXONOMY_OPTIONS.reproduction.find(o => o.value === formData.reproduction_type)?.label}
+                            </Text>
+                        )}
+                        {openSelect === "reproduction" && (
+                            <Box
+                                position="absolute"
+                                top="70px"
+                                bg="white"
+                                zIndex="1000"
+                                overflow="hidden"
+                                boxShadow="0 8px 20px rgba(0, 0, 0, 0.4)"
+                                borderRadius="8px"
+                                minW="160px"
+                            >
+                                {TAXONOMY_OPTIONS.reproduction.map((option) => (
+                                    <Box
+                                        key={option.value}
+                                        px="16px"
+                                        py="8px"
+                                        cursor="pointer"
+                                        color="black"
+                                        _hover={{ bg: "black", color: "white"}}
+                                        onClick={() => {
+                                            setFormData({ ...formData, reproduction_type: option.value});
+                                            setOpenSelect(null);
+                                        }}
+                                    >
+                                        {option.label}
+                                    </Box>
+                                ))}
+                            </Box>
+                        )}
+                    </GridItem>
+                    <GridItem 
+                        colSpan={{ base: 5, md: 2 }}
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                    >
+                        <Image
+                            src="/backgrounds/home/earth-white.svg"
+                            maxH="120px"
+                            objectFit="contain"
+                        />
                     </GridItem>
                 </Grid>
             </Box>
@@ -1007,15 +611,22 @@ export default function AddKingdomView() {
                         position="relative"
                         borderBottom="1px solid"
                     >
-                        {renderBlockForm(block, index)}
+                        <BlockFormKingdom
+                            block={block}
+                            index={index}
+                            updateBlockData={updateBlockData}
+                            textColor={textColor}
+                            themeColor={formData.theme_color}
+                        />
+
                         <Button
                             position="absolute"
                             top={4}
                             right={4}
                             size="sm"
                             colorScheme="red"
-                            bg={"red.600"}
-                            color={"white"}
+                            bg="red.600"
+                            color="white"
                             zIndex={10}
                             onClick={() => {
                                 const newDesc = formData.description.filter((_, i) => i !== index);
@@ -1104,8 +715,9 @@ export default function AddKingdomView() {
                     mx="auto"
                     display="block"
                     mb={4}
+                    onClick={submitForm}
                     _hover={{
-                        scale: 1.02,
+                        transform: "scale(1.02)",
                     }}
                 >
                     Hoàn Tất
