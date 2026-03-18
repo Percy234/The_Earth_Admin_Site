@@ -7,7 +7,6 @@ import {
  } from '@chakra-ui/react'
  
 import { useRef, useEffect, useState } from 'react';
-import DashboardHeader from "../components/ui/Header";
 import ManageKingdoms from './kingdoms/ManageView';
 
 import gsap from 'gsap';
@@ -44,7 +43,7 @@ export default function Dashboard() {
                 duration: 2,
                 ease: "power2.out"
             }
-        ),
+        )
         // tl.fromTo(".stat_animation",
         //     {
         //         y: 100,
@@ -58,21 +57,6 @@ export default function Dashboard() {
         //         stagger: 0.2,
         //     },
         // );
-        ScrollTrigger.create({
-            trigger: container.current,
-            start: "top center",
-            end: "bottom center",
-            onEnter: () => setActiveSection('home'),
-            onEnterBack: () => setActiveSection('home'),
-        });
-
-        // Khi ở phần ManageKingdoms (Sưu tập)
-        ScrollTrigger.create({
-            trigger: kingdomSection.current,
-            start: "top center",
-            onEnter: () => setActiveSection('collection'),
-            onEnterBack: () => setActiveSection('collection'),
-        });
     }, { scope: container })
 
     const handleScrollTo = (target) => {
@@ -87,10 +71,6 @@ export default function Dashboard() {
             display="flex"
             flexDirection="column"
         >
-            <DashboardHeader 
-                activeSection={activeSection} 
-                onScrollTo={handleScrollTo} 
-            />
             <Box
                 ref={container}
                 w="100%"

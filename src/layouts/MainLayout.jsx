@@ -107,41 +107,39 @@
 //                     </GridItem>
 //                 </Grid>
 //             </Box>
-//             <Box h='vh'>
-//                 <Grid templateColumns="repeat(4, 1fr)" gap={4}>
-//                     <GridItem colSpan={1}>
-//                         <Box 
-//                         h={"100%"}
-//                         borderRight={"1px solid"}
-//                         borderColor={theme === 'dark' ? "gray.700" : "gray.200"}
-//                         >
-//                             <Sidebar links={[
-//                                 {name: "Quản lý các giới", path: "/kingdoms"},
-//                                 {name: "Thêm giới mới", path: "/kingdoms/add"}
-//                             ]} />
-//                         </Box>
-//                     </GridItem>
-//                     <GridItem colSpan={3}>
-//                         <Box>
-//                             <Outlet />
-//                         </Box>
-//                     </GridItem>
-//                 </Grid>
-//             </Box>
+            
 //         </Box>
 //     )
 // }
 import { Outlet } from 'react-router-dom'
-import { Box } from '@chakra-ui/react'
+import { Box, Grid, GridItem } from '@chakra-ui/react'
 import ScrollToTop from '../components/ui/ScrollToTop'
+import Sidebar from '../components/ui/Sidebar';
 import { Toaster } from '../components/ui/Toaster';
 
 export default function MainLayout() {
     return (
-        <Box>
-            <ScrollToTop/>
-            <Outlet />
-            <Toaster />
-        </Box>
+        <Box h='vh'>
+                <Grid templateColumns="repeat(5, 1fr)" gap={4}>
+                    <GridItem colSpan={1}>
+                        <Box 
+                        h={"100%"}
+                        borderRight={"1px solid"}
+                        >
+                            <Sidebar links={[
+                                {name: "Quản lý các giới", path: "/kingdoms"},
+                                {name: "Thêm giới mới", path: "/kingdoms/add"}
+                            ]} />
+                        </Box>
+                    </GridItem>
+                    <GridItem colSpan={4}>
+                        <Box>
+                            <ScrollToTop />
+                            <Outlet />
+                            <Toaster />
+                        </Box>
+                    </GridItem>
+                </Grid>
+            </Box>
     )
 }

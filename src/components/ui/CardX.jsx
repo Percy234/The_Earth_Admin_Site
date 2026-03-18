@@ -60,7 +60,40 @@ export default function CardX({
                     objectFit="cover"
                 />
             </Box>
-            
+            <Card.Body 
+                p={4}
+                bg={"white"}
+            >
+                <Grid
+                    templateColumns="repeat(5, 1fr)"
+                    gap={2}
+                >
+                    <GridItem colSpan={3}>
+                        <Heading 
+                            fontSize={"xl"} 
+                            mb={2}
+                            color={"black"}
+                        >
+                            {title}
+                        </Heading>
+                        <Text fontSize={"sm"} color={"gray.500"} mb={2}>
+                            {subTitle}
+                        </Text>
+                    </GridItem>
+                    <GridItem
+                        colSpan={2}
+                    >
+                        <Stack 
+                            direction={"row"}
+                            spacing={2}
+                            justifyContent={"flex-end"}
+                            w="full"
+                        >
+                           
+                        </Stack>
+                    </GridItem>
+                </Grid>
+            </Card.Body>
         
         </Card.Root>
     )
