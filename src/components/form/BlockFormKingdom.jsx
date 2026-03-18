@@ -159,12 +159,12 @@ export default function BlockFormKingdom({
                                             if (!file) return;
 
                                             const previewUrl = URL.createObjectURL(file);
-                                            updateBlockData(index, "img_url", previewUrl); 
 
-                                            const res = await KINGDOM_API.uploadBlockImage(file);
-                                            if (res.status === "success") {
-                                                updateBlockData(index, "img_url", res.data.filePath);
-                                            }
+                                            // preview
+                                            updateBlockData(index, "img_url", previewUrl);
+
+                                            // lưu file thật
+                                            updateBlockData(index, "img_file", file);
                                         }}
                                     />
                                 {block.img_url ? (
@@ -314,12 +314,12 @@ export default function BlockFormKingdom({
                                             if (!file) return;
 
                                             const previewUrl = URL.createObjectURL(file);
-                                            updateBlockData(index, "img_url", previewUrl); 
 
-                                            const res = await KINGDOM_API.uploadBlockImage(file);
-                                            if (res.status === "success") {
-                                                updateBlockData(index, "img_url", res.data.filePath);
-                                            }
+                                            // preview
+                                            updateBlockData(index, "img_url", previewUrl);
+
+                                            // 🔥 lưu file thật
+                                            updateBlockData(index, "img_file", file);
                                         }}
                                     />
                                 {block.img_url ? (
@@ -410,12 +410,12 @@ export default function BlockFormKingdom({
                                             if (!file) return;
 
                                             const previewUrl = URL.createObjectURL(file);
-                                            updateBlockData(index, "img_url", previewUrl); 
 
-                                            const res = await KINGDOM_API.uploadBlockImage(file);
-                                            if (res.status === "success") {
-                                                updateBlockData(index, "img_url", res.data.filePath);
-                                            }
+                                            // preview
+                                            updateBlockData(index, "img_url", previewUrl);
+
+                                            // 🔥 lưu file thật
+                                            updateBlockData(index, "img_file", file);
                                         }}
                                     />
                                 {block.img_url ? (

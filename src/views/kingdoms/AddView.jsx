@@ -44,10 +44,9 @@ export default function AddKingdomView() {
         thumbnail_url: null,
         background_url: null,
         theme_color: "",
+        thumbnail_file: null,
+        background_file: null,
     });
-    const textColor = getContrastColor(formData.theme_color);
-    //setup
-    
 
     //hooks
     useEffect(() => {
@@ -61,12 +60,26 @@ export default function AddKingdomView() {
         // console.log(kingdoms);
         setAllKingdoms(kingdoms.data);
     };
-    const submitForm = async () => {
+    const uploadBlockImages = async (description) => {
+        return await Promise.all(
+            description.map(async (block) => {
+                if (block.img_file) {
+                    const res = await KINGDOM_API.uploadBlockImage(block.img_file);
 
+                    if (res.status === "success") {
+                        return {
+                            ...block,
+                            img_url: res.data.filePath
+                        };
+                    }
+                }
+                return block;
+            })
+        );
+    };
+    const submitForm = async () => {
         const message = checkFormValidity();
         if (message.length > 0) {
-            console.warn("Validation failed:", message);
-            
             const errorConfig = {
                 title: "Form không hợp lệ",
                 description: message,
@@ -75,18 +88,54 @@ export default function AddKingdomView() {
 
             if (toaster.error) toaster.error(errorConfig);
             else toaster.create(errorConfig);
-            
+
             return;
         }
 
         try {
-            console.log("Sending data:", formData);
-            const res = await KINGDOM_API.createKingdom(formData);
+            let thumbnailUrl = null;
+            let backgroundUrl = null;
+
+            if (formData.thumbnail_file) {
+                const resThumb = await KINGDOM_API.uploadThumbnail(formData.thumbnail_file);
+                if (resThumb.status === "success") {
+                    thumbnailUrl = resThumb.data.filePath;
+                } else {
+                    throw new Error("Upload thumbnail thất bại");
+                }
+            }
+
+            if (formData.background_file) {
+                const resBg = await KINGDOM_API.uploadBackground(formData.background_file);
+                if (resBg.status === "success") {
+                    backgroundUrl = resBg.data.filePath;
+                } else {
+                    throw new Error("Upload background thất bại");
+                }
+            }
+            const updatedDescription = await uploadBlockImages(formData.description);
+            const cleanDescription = updatedDescription.map(block => {
+                const { img_file, ...rest } = block;
+                return rest;
+            });
+            const payload = {
+                ...formData,
+                thumbnail_url: thumbnailUrl,
+                background_url: backgroundUrl,
+                description: cleanDescription
+            };
+
+            delete payload.thumbnail_file;
+            delete payload.background_file;
+
+            console.log("Sending data:", payload);
+
+            const res = await KINGDOM_API.createKingdom(payload);
 
             toaster.create({
-            title: res.title || (res.status === "success" ? "Thành công" : "Lỗi"),
-            description: res.message,
-            type: res.status === "success" ? "success" : "error",
+                title: res.title || (res.status === "success" ? "Thành công" : "Lỗi"),
+                description: res.message,
+                type: res.status === "success" ? "success" : "error",
             });
 
             if (res.status === "success") {
@@ -100,18 +149,24 @@ export default function AddKingdomView() {
                     thumbnail_url: null,
                     background_url: null,
                     theme_color: "",
+                    thumbnail_file: null,
+                    background_file: null,
                 });
+
                 setTemplateImgUrl(null);
-                setTemplateBgUrl?.(null);
+                setTemplateBgUrl(null);
                 setUploadFileKey(Date.now());
             }
+
         } catch (error) {
             console.error("Submit Error:", error);
+
             const failConfig = {
                 title: "Lỗi hệ thống",
-                description: "Không thể kết nối đến máy chủ.",
+                description: error.message || "Không thể kết nối đến máy chủ.",
                 type: "error"
             };
+
             if (toaster.error) toaster.error(failConfig);
             else toaster.create(failConfig);
         }
@@ -132,51 +187,30 @@ export default function AddKingdomView() {
 
     //get files
     const handleFileChange = (files, type) => {
-        if(files  && files.acceptedFiles.length > 0){
-            //lấy file đầu tiên
+        if (files && files.acceptedFiles.length > 0) {
             const file = files.acceptedFiles[0];
 
             if (type === "thumbnail") {
-                //tạo URL tạm thời để hiển thị ảnh
+                // preview
                 setTemplateImgUrl(URL.createObjectURL(file));
-                //upload file lên server
-                uploadKingdomThumbnail(file);
+
+                // lưu file thật
+                setFormData(prev => ({
+                    ...prev,
+                    thumbnail_file: file
+                }));
             }
+
             if (type === "background") {
                 setTemplateBgUrl(URL.createObjectURL(file));
-                uploadBackground(file);
+
+                setFormData(prev => ({
+                    ...prev,
+                    background_file: file
+                }));
             }
         }
-    }
-
-    //upload file to server
-    const uploadKingdomThumbnail = async (file) => {
-        const res = await KINGDOM_API.uploadThumbnail(file);
-        toaster[res.status]({
-            title: res.title,
-            description: res.message,
-        });
-        if(res.status === "success"){
-            setFormData((prev) => ({
-                ...prev,
-                thumbnail_url: res.data.filePath,
-            }));
-        }
-    }
-
-    const uploadBackground = async (file) => {
-        const res = await KINGDOM_API.uploadBackground(file);
-        toaster[res.status]({
-            title: res.title,
-            description: res.message,
-        });
-        if(res.status === "success"){
-            setFormData((prev) => ({
-                ...prev,
-                background_url: res.data.filePath,
-            }));
-        }
-    }
+    };
 
     const addDescriptionBlock = (type) => {
         const newBlock = {
@@ -227,13 +261,19 @@ export default function AddKingdomView() {
 
         return brightness > 155 ? "#0F0F0F" : "#FFFFFF";
     }
-
+    const textColor = getContrastColor(formData.theme_color);
     const colorInputRef = useRef(null);
     const bgInputRef = useRef(null);
     const thumbInputRef = useRef(null);
-    const [templateBgUrl, setTemplateBgUrl] = useState(null);
     const [openSelect, setOpenSelect] = useState(null);
-
+    
+    const [templateBgUrl, setTemplateBgUrl] = useState(null);
+    useEffect(() => {
+        return () => {
+            if (templateImgUrl) URL.revokeObjectURL(templateImgUrl);
+            if (templateBgUrl) URL.revokeObjectURL(templateBgUrl);
+        };
+    }, [templateImgUrl, templateBgUrl]);
     return(
         <Box
             display={"flex"}

@@ -22,7 +22,6 @@ export default function CardX({
     subTitle,
     themeColor,
     description,
-    category,
     onEdit,
     onDelete,
 }) {
@@ -61,57 +60,7 @@ export default function CardX({
                     objectFit="cover"
                 />
             </Box>
-            <Card.Body 
-                p={4}
-                bg={"white"}
-            >
-                <Grid
-                    templateColumns="repeat(5, 1fr)"
-                    gap={2}
-                >
-                    <GridItem colSpan={3}>
-                        <Heading 
-                            fontSize={"xl"} 
-                            mb={2}
-                            color={"black"}
-                        >
-                            {title}
-                        </Heading>
-                        <Text fontSize={"sm"} color={"gray.500"} mb={2}>
-                            {subTitle}
-                        </Text>
-                    </GridItem>
-                    <GridItem
-                        colSpan={2}
-                    >
-                        <Stack 
-                            direction={"row"}
-                            spacing={2}
-                            justifyContent={"flex-end"}
-                            w="full"
-                        >
-                            <Button
-                                size="xl" 
-                                variant="ghost" 
-                                bg={"yellow.500"}
-                                onClick={onEdit}
-                                p={2}
-                            >
-                                <LuPencilLine style={{ stroke: "white", strokeWidth: "2px" }}/>
-                            </Button>
-                            <Button 
-                                size="xl" 
-                                variant="ghost" 
-                                bg={"red.500"}
-                                onClick={onDelete}
-                                p={2}
-                            >
-                                <LuTrash2 style={{ stroke: "white", strokeWidth: "2px" }} color="#E53E3E" />
-                            </Button>
-                        </Stack>
-                    </GridItem>
-                </Grid>
-            </Card.Body>
+            
         
         </Card.Root>
     )
