@@ -107,7 +107,7 @@
 //                     </GridItem>
 //                 </Grid>
 //             </Box>
-            
+
 //         </Box>
 //     )
 // }
@@ -119,27 +119,30 @@ import { Toaster } from '../components/ui/Toaster';
 
 export default function MainLayout() {
     return (
-        <Box h='vh'>
-                <Grid templateColumns="repeat(5, 1fr)" gap={4}>
-                    <GridItem colSpan={1}>
-                        <Box 
+        <Box
+            h='vh'
+            bg={"#020626"}
+
+        >
+            <Grid templateColumns="repeat(5, 1fr)">
+                <GridItem colSpan={1}>
+                    <Box
                         h={"100%"}
-                        borderRight={"1px solid"}
-                        >
-                            <Sidebar links={[
-                                {name: "Quản lý các giới", path: "/kingdoms"},
-                                {name: "Thêm giới mới", path: "/kingdoms/add"}
-                            ]} />
-                        </Box>
-                    </GridItem>
-                    <GridItem colSpan={4}>
-                        <Box>
-                            <ScrollToTop />
-                            <Outlet />
-                            <Toaster />
-                        </Box>
-                    </GridItem>
-                </Grid>
-            </Box>
+                    >
+                        <Sidebar links={[
+                            { name: "Quản lý các giới", path: "/kingdoms" },
+                            { name: "Thêm giới mới", path: "/kingdoms/add" }
+                        ]} />
+                    </Box>
+                </GridItem>
+                <GridItem colSpan={4}>
+                    <Box>
+                        <ScrollToTop />
+                        <Outlet />
+                        <Toaster />
+                    </Box>
+                </GridItem>
+            </Grid>
+        </Box>
     )
 }

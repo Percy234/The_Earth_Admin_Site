@@ -279,7 +279,7 @@ export default function BlockFormKingdom({
                                         e.target.style.height = e.target.scrollHeight + "px";
                                         updateBlockData(index, "content", e.target.value);
                                     }}
-                                    color="#4B4B4B"
+                                    color="#696868"
                                     placeholder="Nhập nội dung"
                                     variant="unstyled"
                                     resize="none"
