@@ -6,7 +6,7 @@ import {
 
 import { useState } from 'react';
 import { useTheme } from 'next-themes';
-import PieChartComponent from '../components/ui/Chart';
+import { PieChart, BarChart, RadarChart } from '../components/ui/Chart';
 import TopNavbar from '../components/ui/TopNavbar';
 
 export default function Dashboard() {
@@ -33,22 +33,29 @@ export default function Dashboard() {
                 fontSize={"3xl"}
                 fontWeight={"bold"}
                 px={1}
+                ml={8}
                 display={"flex"}
                 color={isDark ? '#f8fafc' : '#020626'}
-                mb={4}
             >
                 Tổng Quan
             </Box>
             <Grid
-                templateColumns="repeat(5, 1fr)"
+                templateColumns="repeat(4, 1fr)"
+                minH='504px'
             >
                 <GridItem 
-                    colSpan={3}
+                    colSpan={2}
+                    display={"flex"}
+                    alignItems={"center"}
+                    justifyContent={"center"}
                 >
-                    <PieChartComponent />
+                    <PieChart />
                 </GridItem>
                 <GridItem colSpan={2}>
-                    <Box></Box>
+                    <Box>
+                        <RadarChart />
+                        <BarChart />
+                    </Box>
                 </GridItem>
             </Grid>
         </Box>

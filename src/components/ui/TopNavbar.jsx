@@ -39,7 +39,8 @@ export default function TopNavbar({
                 <Flex
                     align='center'
                     gap={2}
-                    flex={1}
+                    w='100%'
+                    maxW={{ base: '100%', md: '360px' }}
                     p='10px 12px'
                     border='1px solid'
                     borderColor={isDark ? '#1d2a5e' : '#d2d9e7'}
@@ -51,9 +52,11 @@ export default function TopNavbar({
                         {...inputProps}
                         placeholder={searchPlaceholder}
                         border='none'
+                        outline='none'
                         p={0}
-                        h='auto'
-                        _focusVisible={{ boxShadow: 'none' }}
+                        h='20px'
+                        _focus={{ boxShadow: 'none', outline: 'none', borderColor: 'transparent' }}
+                        _focusVisible={{ boxShadow: 'none', outline: 'none', borderColor: 'transparent' }}
                         color={isDark ? '#e2e8f0' : '#1e293b'}
                         _placeholder={{ color: isDark ? '#94a3b8' : '#64748b' }}
                     />
