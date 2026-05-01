@@ -1,5 +1,6 @@
 import React from 'react';
-import { Pie, Bar, Radar } from 'react-chartjs-2';
+import { Pie, Bar, Radar, Line } from 'react-chartjs-2';
+import { useTheme } from 'next-themes';
 import { 
   Chart as ChartJS,
   ArcElement, 
@@ -13,7 +14,6 @@ import {
   PointElement,
   LineElement,
   Filler,
-  scales,
  } from 'chart.js';
 import { Box } from '@chakra-ui/react';
 
@@ -31,7 +31,13 @@ ChartJS.register(
   Filler
 );
 
+// Biểu đồ tròn (Pie Chart)
 const PieChart = () => {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  const textColor = isDark ? '#e2e8f0' : '#0f172a';
+  const gridColor = isDark ? 'rgba(148, 163, 184, 0.25)' : 'rgba(148, 163, 184, 0.22)';
+
   const data = {
     labels: ['Động vật', 'Thực vật', 'Nấm', 'Nguyên sinh', 'Khởi sinh'],
     datasets: [
@@ -52,28 +58,43 @@ const PieChart = () => {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
+      title: {
+        display: true,
+        text: 'Số lượng loài của các giới sinh vật',
+        color: textColor,
+        padding: {
+          top: 4,
+          bottom: 8,
+        },
+      },
       legend: {
-        position: 'bottom'
-      }
+        position: 'bottom',
+        labels: {
+          color: textColor,
+        },
+      },
     }
   };
 
   return (
-    <>
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Box w="350px" h="350px">
-            <Pie data={data} options={options} />
-        </Box>
+    <Box w="100%" h="100%" display="flex" flexDirection="column">
+      <Box flex="1" minH={0}>
+        <Pie
+          data={data}
+          options={options}
+        />
       </Box>
-    </>
+    </Box>
   );  
 };
 
+// Biểu đồ cột (Bar Chart)
 const BarChart = () => {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  const textColor = isDark ? '#e2e8f0' : '#0f172a';
+  const gridColor = isDark ? 'rgba(148, 163, 184, 0.25)' : 'rgba(148, 163, 184, 0.22)';
+
   const data = {
     labels: ['Khởi sinh', 'Nguyên sinh', 'Nấm', 'Thực vật', 'Động vật'],
     datasets: [
@@ -92,35 +113,60 @@ const BarChart = () => {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       title: {
         display: true,
         text: 'Tỉ lệ sống trên Cạn và dưới Nước của các giới (%)',
+        color: textColor,
+      },
+      legend: {
+        labels: {
+          color: textColor,
+        },
       },
     },
     scales: {
       x: {
         stacked: true,
+        ticks: {
+          color: textColor,
+        },
+        grid: {
+          color: gridColor,
+        },
       },
       y: {
         stacked: true,
         beginAtZero: true,
         max: 100,
         ticks: {
+          color: textColor,
           callback: (value) => `${value}%`,
+        },
+        grid: {
+          color: gridColor,
         },
       },
     },
   };
 
   return (
-    <Box w="350px" h="350px">
-      <Bar data={data} options={options} />
+    <Box w="100%" h="100%" display="flex" flexDirection="column">
+      <Box flex="1" minH={0}>
+        <Bar data={data} options={options} />
+      </Box>
     </Box>
   );
 };
 
+// Biểu đồ radar (Radar Chart)
 const RadarChart = () => {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  const textColor = isDark ? '#e2e8f0' : '#0f172a';
+  const gridColor = isDark ? 'rgba(148, 163, 184, 0.25)' : 'rgba(148, 163, 184, 0.22)';
+
   const data = {
     labels: ['Động vật', 'Thực vật', 'Nấm', 'Nguyên sinh', 'Khởi sinh'],
     datasets: [
@@ -134,12 +180,36 @@ const RadarChart = () => {
   };
 
   const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Nhiệt độ môi trường sống trung bình (°C)',
+        color: textColor
+      },
+      legend: {
+        labels: {
+          color: textColor,
+        },
+      },
+    },
     scales: {
       r: {
         min: 0,
         max: 50,
+        angleLines: {
+          color: gridColor,
+        },
+        grid: {
+          color: gridColor,
+        },
+        pointLabels: {
+          color: textColor,
+        },
         ticks: {
           stepSize: 10,
+          color: textColor,
           callback: (value) => `${value}°C`,
         },
       }
@@ -147,10 +217,80 @@ const RadarChart = () => {
   }
 
   return (
-    <Box w="350px" h="350px">
-      <Radar data={data} options={options} />
+    <Box w="100%" h="100%" display="flex" flexDirection="column">
+      <Box flex="1" minH={0}>
+        <Radar data={data} options={options} />
+      </Box>
     </Box>
   );
 };
 
-export { PieChart, BarChart, RadarChart };
+//Biểu đồ đường (Line Chart)
+const EraLineChart = () => {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  const textColor = isDark ? '#e2e8f0' : '#0f172a';
+  const gridColor = isDark ? 'rgba(148, 163, 184, 0.25)' : 'rgba(148, 163, 184, 0.22)';
+
+  const data = {
+    labels: ['Tiền Cambri', 'Cổ Sinh', 'Trung Sinh', 'Tân Sinh'],
+    datasets: [
+      {
+        label: 'Số loài ước tính',
+        data: [1000, 10000, 20000, 1000000],
+        fill: true,
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.3)',
+        tension: 0.3, // làm mượt đường
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Sự phát triển số lượng loài qua các kỷ nguyên',
+        color: textColor,
+      },
+      legend: {
+        position: 'top',
+        labels: {
+          color: textColor,
+        },
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: textColor,
+          callback: (value) => value.toLocaleString(),
+        },
+        grid: {
+          color: gridColor,
+        },
+      },
+      x: {
+        ticks: {
+          color: textColor,
+        },
+        grid: {
+          color: gridColor,
+        },
+      },
+    },
+  };
+
+  return (
+    <Box w="100%" h="100%" display="flex" flexDirection="column">
+      <Box flex="1" minH={0}>
+        <Line data={data} options={options} />
+      </Box>
+    </Box>
+  );
+};
+
+export { PieChart, BarChart, RadarChart, EraLineChart };

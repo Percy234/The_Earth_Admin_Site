@@ -33,7 +33,8 @@ export default function TopNavbar({
             justify='space-between'
             h={{ base: 'auto', md: '60px' }}
             gap={3}
-            mb={3}
+            px={4}
+            py={3}
         >
             {showSearch && (
                 <Flex
