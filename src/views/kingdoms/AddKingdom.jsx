@@ -21,7 +21,7 @@ import { useTheme } from "next-themes";
 import { TAXONOMY_OPTIONS } from "../../config/data.config";
 
 //components
-import BlockFormKingdom from "../../components/form/BlockFormKingdom";
+import BlockKingdom from "../../components/form/BlockKingdom";
 import { Toaster, toaster } from "../../components/ui/Toaster"
 import { Tooltip } from "../../components/ui/Tooltip";
 import TagList from "../../components/ui/TagList";
@@ -321,7 +321,7 @@ export default function AddKingdom() {
                             borderRadius="lg"
                             bgColor="#111a3a"
                         >
-                            <Heading fontWeight="bold" mb={4}>Thông tin cơ bản</Heading>
+                            <Heading fontWeight="bold" mb={4} fontSize={"2xl"} textAlign="center">Thông tin cơ bản</Heading>
                             <Stack spacing={6}>
                                 {/* Tên */}
                                 <Grid 
@@ -627,9 +627,8 @@ export default function AddKingdom() {
                             {formData.description.map((block, index) => (
                                 <Box
                                     key={index}
-                                    borderBottom="1px solid"
                                 >
-                                    <BlockFormKingdom
+                                    <BlockKingdom
                                         block={block}
                                         index={index}
                                         updateBlockData={updateBlockData}
