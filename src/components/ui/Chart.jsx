@@ -211,6 +211,7 @@ const RadarChart = () => {
           stepSize: 10,
           color: textColor,
           callback: (value) => `${value}°C`,
+          backdropColor: 'transparent',
         },
       }
     }
@@ -241,7 +242,7 @@ const EraLineChart = () => {
         fill: true,
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgba(75, 192, 192, 0.3)',
-        tension: 0.3, // làm mượt đường
+        tension: 0.3,
       },
     ],
   };

@@ -16,6 +16,7 @@ export default function MainLayout() {
                         { name: 'Tổng quan', path: '/' },
                         { name: 'Quản lý các giới', path: '/kingdoms' },
                         { name: 'Thêm giới mới', path: '/kingdoms/add' },
+                        { name: 'Thêm giới mới', path: '/kingdoms/addKingdom' },
                     ]}
                 />
 

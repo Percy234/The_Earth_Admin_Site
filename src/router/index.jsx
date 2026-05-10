@@ -4,6 +4,7 @@ import MainLayout from "../layouts/MainLayout";
 import Dashboard from "../views/Dashboard";
 //views
 import AddKingdomView from "../views/kingdoms/AddView";
+import AddKingdom from "../views/kingdoms/addKingdom";
 import ManageKingdoms from "../views/kingdoms/ManageView";
 
 
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
             {
                 path: "/kingdoms/add",
                 element: <AddKingdomView />
+            },
+            {
+                path: "/kingdoms/addKingdom",
+                element: <AddKingdom />
             }
         ]
     }

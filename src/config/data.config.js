@@ -2,7 +2,7 @@ export const TAXONOMY_OPTIONS = {
     cell: [
         { value: "P", label: "Nhân sơ" },
         { value: "E", label: "Nhân thực" },
-        { value: "B", label: "Hỗn hợp" }
+        { value: "B", label: "Cả hai" }
     ],
 
     nutrition: [
@@ -14,6 +14,6 @@ export const TAXONOMY_OPTIONS = {
     reproduction: [
         { value: "A", label: "Vô tính" },
         { value: "S", label: "Hữu tính" },
-        { value: "B", label: "Hỗn hợp" }
+        { value: "B", label: "Cả hai" }
     ]
 };
