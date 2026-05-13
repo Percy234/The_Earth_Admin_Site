@@ -28,6 +28,7 @@ import TagList from "../../components/ui/TagList";
 import KINGDOM_API from "../../services/kingdom.api";
 import { Label } from "recharts";
 import TopNavbar from "../../components/ui/TopNavbar";
+import ReviewKingdom from "../../components/review/reviewKingdom";
 
 export default function AddKingdom() {
     const { theme } = useTheme();
@@ -216,23 +217,32 @@ export default function AddKingdom() {
     };
 
     const handleImageInputChange = (e, type) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            if (type === "thumbnail") {
-                setThumbnailFileName(file.name);
-                setFormData(prev => ({
-                    ...prev,
-                    thumbnail_file: file
-                }));
-            } else if (type === "background") {
-                setBackgroundFileName(file.name);
-                setFormData(prev => ({
-                    ...prev,
-                    background_file: file
-                }));
-            }
+    const file = e.target.files?.[0];
+
+    if (file) {
+        if (type === "thumbnail") {
+            setThumbnailFileName(file.name);
+
+            setTemplateImgUrl(URL.createObjectURL(file));
+
+            setFormData(prev => ({
+                ...prev,
+                thumbnail_file: file
+            }));
         }
-    };
+
+        else if (type === "background") {
+            setBackgroundFileName(file.name);
+
+            setTemplateBgUrl(URL.createObjectURL(file));
+
+            setFormData(prev => ({
+                ...prev,
+                background_file: file
+            }));
+        }
+    }
+};
 
     const addDescriptionBlock = (type) => {
         const newBlock = {
@@ -332,7 +342,7 @@ export default function AddKingdom() {
                                     <GridItem>
                                         <Text mb={1}>Tên thường gọi</Text>
                                         <Input
-                                            placeholder="VD: Động vật"
+                                            placeholder="VD: Giới Động vật"
                                             value={formData.normal_name}
                                             onChange={(e) => setFormData({ ...formData, normal_name: e.target.value })}
                                             bg={"#1f2852"}
@@ -618,12 +628,7 @@ export default function AddKingdom() {
                                 </Grid>
                             </Stack>
                         </Box>
-                        <Box
-                            w="100%"
-                            mt={6}
-                            borderRadius="lg"
-                            bgColor="#111a3a"
-                        >
+                        <Stack spacing={0} w="100%" mt={4}>
                             {formData.description.map((block, index) => (
                                 <Box
                                     key={index}
@@ -638,10 +643,10 @@ export default function AddKingdom() {
                                     />
                                 </Box>
                             ))}
-                        </Box>
+                        </Stack>
                         <Box
                             w="100%"
-                            mt={6}
+                            mt={4}
                             borderRadius="lg"
                             bgColor="#111a3a"
                         >
@@ -700,13 +705,24 @@ export default function AddKingdom() {
                                 </Grid>
                             </Box>
                         </Box>
-                    </GridItem>
-                    <GridItem colSpan={4}>
-                        <Box
-                            h="100%"
+                        <Button
+                            mt={4}
                             w="100%"
-                            bgColor="blue.100"
-                        ></Box>
+                            bg="#2a69ac"
+                            color="white"
+                            _hover={{ bg: "#2c5282" }}
+                            onClick={submitForm}
+                        >
+                            Hoàn thành
+                        </Button>
+                    </GridItem>
+                    {/* Review Page */}
+                    <GridItem colSpan={4}>
+                        <ReviewKingdom
+                            formData={formData}
+                            templateImgUrl={templateImgUrl}
+                            templateBgUrl={templateBgUrl}
+                        />
                     </GridItem>
                 </Grid>
             </Box>

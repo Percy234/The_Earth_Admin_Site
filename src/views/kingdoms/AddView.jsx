@@ -14,7 +14,7 @@ import {
     Heading,
     Text,
 } from "@chakra-ui/react"
-import { LuUpload } from "react-icons/lu"
+import { LuUpload } from "react-icons/lu";
 import { useTheme } from "next-themes";
 
 //method

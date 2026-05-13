@@ -43,12 +43,13 @@ export default function Dashboard() {
                     flex="1"
                     display="grid"
                     gridTemplateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }}
-                    gridTemplateRows={{ base: 'repeat(4, minmax(260px, auto))', xl: '320px 280px' }}
+                    gridTemplateRows={{ base: 'repeat(4, minmax(320px, auto))', xl: '320px 280px' }}
                     gap={3}
                     alignItems="stretch"
                 >
                     <Box
-                        minH={{ base: '260px', xl: '0' }}
+                        minH={{ base: '320px', xl: '0' }}
+                        minW={0}
                         w="100%"
                         bg={isDark ? '#111a3a' : '#ffffff'}
                         border="1px solid"
@@ -61,7 +62,8 @@ export default function Dashboard() {
                     </Box>
 
                     <Box
-                        minH={{ base: '260px', xl: '0' }}
+                        minH={{ base: '320px', xl: '0' }}
+                        minW={0}
                         w="100%"
                         bg={isDark ? '#111a3a' : '#ffffff'}
                         border="1px solid"
@@ -74,7 +76,8 @@ export default function Dashboard() {
                     </Box>
 
                     <Box
-                        minH={{ base: '260px', xl: '0' }}
+                        minH={{ base: '320px', xl: '0' }}
+                        minW={0}
                         w="100%"
                         bg={isDark ? '#111a3a' : '#ffffff'}
                         border="1px solid"
@@ -88,7 +91,8 @@ export default function Dashboard() {
 
                     <Box
                         gridColumn={{ base: 'auto', xl: '1 / -1' }}
-                        minH={{ base: '260px', xl: '0' }}
+                        minH={{ base: '320px', xl: '0' }}
+                        minW={0}
                         w="100%"
                         bg={isDark ? '#111a3a' : '#ffffff'}
                         border="1px solid"

@@ -28,12 +28,14 @@ export default function TopNavbar({
 
     return (
         <Flex
-            direction={{ base: 'column', md: 'row' }}
-            align={{ base: 'stretch', md: 'center' }}
-            justify='space-between'
+            direction={{ base: 'row', md: 'row' }}
+            align={{ base: 'center', md: 'center' }}
+            justify={{ base: 'space-between', md: 'space-between' }}
+            wrap={{ base: 'nowrap', md: 'nowrap' }}
             h={{ base: 'auto', md: '60px' }}
             gap={3}
-            px={4}
+            ps={{ base: '64px', md: 4 }}
+            pe={4}
             py={3}
         >
             {showSearch && (
@@ -41,6 +43,8 @@ export default function TopNavbar({
                     align='center'
                     gap={2}
                     w='100%'
+                    minW={0}
+                    flex={{ base: '1 1 auto', md: '0 1 360px' }}
                     maxW={{ base: '100%', md: '360px' }}
                     p='10px 12px'
                     border='1px solid'
@@ -56,6 +60,7 @@ export default function TopNavbar({
                         outline='none'
                         p={0}
                         h='20px'
+                        minW={0}
                         _focus={{ boxShadow: 'none', outline: 'none', borderColor: 'transparent' }}
                         _focusVisible={{ boxShadow: 'none', outline: 'none', borderColor: 'transparent' }}
                         color={isDark ? '#e2e8f0' : '#1e293b'}

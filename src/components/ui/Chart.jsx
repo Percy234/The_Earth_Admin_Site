@@ -77,8 +77,19 @@ const PieChart = () => {
   };
 
   return (
-    <Box w="100%" h="100%" display="flex" flexDirection="column">
-      <Box flex="1" minH={0}>
+    <Box w="100%" h="100%" minW={0} maxW="100%" overflow="hidden" display="flex" flexDirection="column">
+      <Box
+        flex="1"
+        minH={0}
+        minW={0}
+        w="100%"
+        overflow="hidden"
+        sx={{
+          canvas: {
+            maxWidth: '100%',
+          },
+        }}
+      >
         <Pie
           data={data}
           options={options}
@@ -152,8 +163,19 @@ const BarChart = () => {
   };
 
   return (
-    <Box w="100%" h="100%" display="flex" flexDirection="column">
-      <Box flex="1" minH={0}>
+    <Box w="100%" h="100%" minW={0} maxW="100%" overflow="hidden" display="flex" flexDirection="column">
+      <Box
+        flex="1"
+        minH={0}
+        minW={0}
+        w="100%"
+        overflow="hidden"
+        sx={{
+          canvas: {
+            maxWidth: '100%',
+          },
+        }}
+      >
         <Bar data={data} options={options} />
       </Box>
     </Box>
@@ -218,8 +240,19 @@ const RadarChart = () => {
   }
 
   return (
-    <Box w="100%" h="100%" display="flex" flexDirection="column">
-      <Box flex="1" minH={0}>
+    <Box w="100%" h="100%" minW={0} maxW="100%" overflow="hidden" display="flex" flexDirection="column">
+      <Box
+        flex="1"
+        minH={0}
+        minW={0}
+        w="100%"
+        overflow="hidden"
+        sx={{
+          canvas: {
+            maxWidth: '100%',
+          },
+        }}
+      >
         <Radar data={data} options={options} />
       </Box>
     </Box>
@@ -286,8 +319,19 @@ const EraLineChart = () => {
   };
 
   return (
-    <Box w="100%" h="100%" display="flex" flexDirection="column">
-      <Box flex="1" minH={0}>
+    <Box w="100%" h="100%" minW={0} maxW="100%" overflow="hidden" display="flex" flexDirection="column">
+      <Box
+        flex="1"
+        minH={0}
+        minW={0}
+        w="100%"
+        overflow="hidden"
+        sx={{
+          canvas: {
+            maxWidth: '100%',
+          },
+        }}
+      >
         <Line data={data} options={options} />
       </Box>
     </Box>
