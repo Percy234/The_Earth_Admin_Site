@@ -1,3 +1,5 @@
+//Code cũ
+
 import { Box, Grid, GridItem, Input, Textarea } from "@chakra-ui/react"
 import KINGDOM_API from "../../services/kingdom.api"
 

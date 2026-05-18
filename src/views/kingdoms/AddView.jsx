@@ -1,3 +1,5 @@
+// Code cũ không dùng nữa, nhưng giữ lại để tham khảo khi cần thiết
+
 import { useState, useEffect, useRef } from "react"
 import {
     Button,

@@ -262,6 +262,12 @@ export default function AddKingdom() {
         updatedDescription[index][field] = value;
         setFormData({ ...formData, description: updatedDescription });
     };
+    const removeDescriptionBlock = (index) => {
+        setFormData((prev) => ({
+            ...prev,
+            description: prev.description.filter((_, i) => i !== index),
+        }));
+    };
     const handleBlockImageChange = async (index, e) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
@@ -632,7 +638,23 @@ export default function AddKingdom() {
                             {formData.description.map((block, index) => (
                                 <Box
                                     key={index}
+                                    position="relative"
                                 >
+                                    <Button
+                                        position="absolute"
+                                        top="35px"
+                                        right="10px"
+                                        zIndex={10}
+                                        size="sm"
+                                        bg="red.500"
+                                        color="white"
+                                        _hover={{
+                                            bg: "red.600"
+                                        }}
+                                        onClick={() => removeDescriptionBlock(index)}
+                                    >
+                                        Xoá
+                                    </Button>
                                     <BlockKingdom
                                         block={block}
                                         index={index}
@@ -722,6 +744,7 @@ export default function AddKingdom() {
                             formData={formData}
                             templateImgUrl={templateImgUrl}
                             templateBgUrl={templateBgUrl}
+                            description={formData.description}
                         />
                     </GridItem>
                 </Grid>
