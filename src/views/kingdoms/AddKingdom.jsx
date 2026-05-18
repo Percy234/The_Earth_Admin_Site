@@ -335,7 +335,7 @@ export default function AddKingdom() {
                             w="100%"
                             p={6}
                             borderRadius="lg"
-                            bgColor="#111a3a"
+                            bg={isDark ? "#111a3a" : "#ffffff"}
                         >
                             <Heading fontWeight="bold" mb={4} fontSize={"2xl"} textAlign="center">Thông tin cơ bản</Heading>
                             <Stack spacing={6}>
@@ -351,7 +351,7 @@ export default function AddKingdom() {
                                             placeholder="VD: Giới Động vật"
                                             value={formData.normal_name}
                                             onChange={(e) => setFormData({ ...formData, normal_name: e.target.value })}
-                                            bg={"#1f2852"}
+                                            bg={isDark ? "#1f2852" : "#ffffff"}
                                             borderColor="rgba(148, 163, 184, 0.25)"
                                         />
                                     </GridItem>
@@ -361,7 +361,7 @@ export default function AddKingdom() {
                                             placeholder="VD: Animalia"
                                             value={formData.science_name}
                                             onChange={(e) => setFormData({ ...formData, science_name: e.target.value })}
-                                            bg={"#1f2852"}
+                                            bg={isDark ? "#1f2852" : "#ffffff"}
                                             borderColor="rgba(148, 163, 184, 0.25)"
                                         />
                                     </GridItem>
@@ -381,14 +381,14 @@ export default function AddKingdom() {
                                             onClick={() => backgroundInputRef.current?.click()}
                                             p={2}
                                             borderRadius="md"
-                                            bg={"#1f2852"}
+                                            bg={isDark ? "#1f2852" : "#f8fafc"}
                                             border="1px solid"
                                             borderColor="rgba(148, 163, 184, 0.25)"
                                             cursor="pointer"
                                             transition="all 0.2s"
                                             _hover={{
                                                 borderColor: "rgba(148, 163, 184, 0.5)",
-                                                bg: "#252d4a"
+                                                bg: isDark ? "#252d4a" : "#eef2f7"
                                             }}
                                             textAlign="left"
                                         >
@@ -413,14 +413,14 @@ export default function AddKingdom() {
                                             onClick={() => thumbnailInputRef.current?.click()}
                                             p={2}
                                             borderRadius="md"
-                                            bg={"#1f2852"}
+                                            bg={isDark ? "#1f2852" : "#f8fafc"}
                                             border="1px solid"
                                             borderColor="rgba(148, 163, 184, 0.25)"
                                             cursor="pointer"
                                             transition="all 0.2s"
                                             _hover={{
                                                 borderColor: "rgba(148, 163, 184, 0.5)",
-                                                bg: "#252d4a"
+                                                bg: isDark ? "#252d4a" : "#eef2f7"
                                             }}
                                             textAlign="left"
                                         >
@@ -455,7 +455,7 @@ export default function AddKingdom() {
                                                             alignItems: "center",
                                                             gap: "10px",
                                                             cursor: "pointer",
-                                                            color: "white",
+                                                            color: isDark ? "white" : "#0f172a",
                                                         }}
                                                     >
                                                         <input
@@ -473,7 +473,7 @@ export default function AddKingdom() {
                                                                 appearance: "none",
                                                                 width: "20px",
                                                                 height: "20px",
-                                                                border: "2px solid white",
+                                                                border: `2px solid ${isDark ? "white" : "#0f172a"}`,
                                                                 borderRadius: "50%",
                                                                 backgroundColor:
                                                                     formData.cell_type === option.value
@@ -505,7 +505,7 @@ export default function AddKingdom() {
                                                             alignItems: "center",
                                                             gap: "10px",
                                                             cursor: "pointer",
-                                                            color: "white",
+                                                            color: isDark ? "white" : "#0f172a",
                                                         }}
                                                     >
                                                         <input
@@ -523,7 +523,7 @@ export default function AddKingdom() {
                                                                 appearance: "none",
                                                                 width: "20px",
                                                                 height: "20px",
-                                                                border: "2px solid white",
+                                                                border: `2px solid ${isDark ? "white" : "#0f172a"}`,
                                                                 borderRadius: "50%",
                                                                 backgroundColor:
                                                                     formData.nutrition_mode === option.value
@@ -561,7 +561,7 @@ export default function AddKingdom() {
                                                             alignItems: "center",
                                                             gap: "10px",
                                                             cursor: "pointer",
-                                                            color: "white",
+                                                            color: isDark ? "white" : "#0f172a",
                                                         }}
                                                     >
                                                         <input
@@ -579,7 +579,7 @@ export default function AddKingdom() {
                                                                 appearance: "none",
                                                                 width: "20px",
                                                                 height: "20px",
-                                                                border: "2px solid white",
+                                                                border: `2px solid ${isDark ? "white" : "#0f172a"}`,
                                                                 borderRadius: "50%",
                                                                 backgroundColor:
                                                                     formData.reproduction_type === option.value
@@ -670,7 +670,8 @@ export default function AddKingdom() {
                             w="100%"
                             mt={4}
                             borderRadius="lg"
-                            bgColor="#111a3a"
+                            bg={isDark ? "#111a3a" : "#ffffff"}
+                            border={isDark ? "none" : "1px solid #e2e8f0"}
                         >
                             <Text
                                 fontSize="2xl"
@@ -686,9 +687,9 @@ export default function AddKingdom() {
                                 >
                                     <Button
                                         onClick={() => addDescriptionBlock("standard")}
-                                        bg="#1f2852"
-                                        color="white"
-                                        _hover={{ bg: "#252d4a" }}
+                                        bg={isDark ? "#1f2852" : "#f8fafc"}
+                                        color={isDark ? "white" : "#0f172a"}
+                                        _hover={{ bg: isDark ? "#252d4a" : "#eef2f7" }}
                                         border="1px solid"
                                         borderColor="rgba(148, 163, 184, 0.25)"
                                     >
@@ -696,9 +697,9 @@ export default function AddKingdom() {
                                     </Button>
                                     <Button
                                         onClick={() => addDescriptionBlock("image_left")}
-                                        bg="#1f2852"
-                                        color="white"
-                                        _hover={{ bg: "#252d4a" }}
+                                        bg={isDark ? "#1f2852" : "#f8fafc"}
+                                        color={isDark ? "white" : "#0f172a"}
+                                        _hover={{ bg: isDark ? "#252d4a" : "#eef2f7" }}
                                         border="1px solid"
                                         borderColor="rgba(148, 163, 184, 0.25)"
                                     >
@@ -706,9 +707,9 @@ export default function AddKingdom() {
                                     </Button>
                                     <Button
                                         onClick={() => addDescriptionBlock("image_right")}
-                                        bg="#1f2852"
-                                        color="white"
-                                        _hover={{ bg: "#252d4a" }}
+                                        bg={isDark ? "#1f2852" : "#f8fafc"}
+                                        color={isDark ? "white" : "#0f172a"}
+                                        _hover={{ bg: isDark ? "#252d4a" : "#eef2f7" }}
                                         border="1px solid"
                                         borderColor="rgba(148, 163, 184, 0.25)"
                                     >
@@ -716,9 +717,9 @@ export default function AddKingdom() {
                                     </Button>
                                     <Button
                                         onClick={() => addDescriptionBlock("image_top")}
-                                        bg="#1f2852"
-                                        color="white"
-                                        _hover={{ bg: "#252d4a" }}
+                                        bg={isDark ? "#1f2852" : "#f8fafc"}
+                                        color={isDark ? "white" : "#0f172a"}
+                                        _hover={{ bg: isDark ? "#252d4a" : "#eef2f7" }}
                                         border="1px solid"
                                         borderColor="rgba(148, 163, 184, 0.25)"
                                     >

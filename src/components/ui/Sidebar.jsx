@@ -68,7 +68,7 @@ function SidebarContent({ links, isDark, onNavigate }) {
                             <NavLink
                                 key={link.path}
                                 to={link.path}
-                                end={isHomeLink}
+                                end={true}
                                 onClick={onNavigate}
                                 style={({ isActive }) => ({
                                     display: 'block',
@@ -154,8 +154,12 @@ export default function Sidebar({ links }) {
         {/* Desktop Sidebar */}
         <Box
             display={{ base: 'none', md: 'block' }}
-            position="sticky"
+            position="fixed"
             top={0}
+            left={0}
+            h="100vh"
+            zIndex={120}
+            w={{ md: '260px', lg: '280px' }}
         >
             <SidebarContent
                 links={links}

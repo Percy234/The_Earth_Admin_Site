@@ -1,6 +1,7 @@
 import KINGDOM_API from "../../services/kingdom.api";
 import { Box, Button, Grid, GridItem, Text, Textarea} from "@chakra-ui/react";
 import { useRef } from "react";
+import { useTheme } from "next-themes";
 
 export default function BlockKingdom({
     block,
@@ -12,6 +13,8 @@ export default function BlockKingdom({
     const colorsBlockId = `colors-block-${index}`;
     const colorInputRef = useRef(null);
     const backgroundInputRef = useRef(null);
+    const { theme } = useTheme();
+    const isDark = theme === "dark";
 
     switch(block.block_type) {
         case "standard":
@@ -20,7 +23,7 @@ export default function BlockKingdom({
                     w="100%"
                     mt={6}
                     borderRadius="lg"
-                    bgColor="#111a3a"
+                    bg={isDark ? "#111a3a" : "#ffffff"}
                 >
                     <Text fontSize="2xl" fontWeight="bold" p={6} textAlign="center" borderRadius="lg">Văn Bản</Text>
                     <Box mb={4} px={4}>
@@ -31,7 +34,7 @@ export default function BlockKingdom({
                                 updateBlockData(index, "heading", e.target.value)
                             }
                             placeholder="Nhập tiêu đề"
-                            bg="#1f2852"
+                            bg={isDark ? "#1f2852" : "#f8fafc"}
                             borderColor="rgba(148, 163, 184, 0.25)"
                         />
                     </Box>
@@ -47,7 +50,7 @@ export default function BlockKingdom({
                                 display="flex"
                                 alignItems="center"
                                 borderRadius="md"
-                                bg={block.bg_color || "#1f2852"}
+                                bg={block.bg_color || (isDark ? "#1f2852" : "#f8fafc")}
                                 border="1px solid"
                                 borderColor="rgba(148, 163, 184, 0.25)"
                                 textAlign="left"
@@ -61,7 +64,7 @@ export default function BlockKingdom({
                             <input
                                 ref={colorInputRef}
                                 type="color"
-                                value={block.bg_color || "#1f2852"}
+                                value={block.bg_color || (isDark ? "#1f2852" : "#f8fafc")}
                                 onChange={(e) =>
                                     updateBlockData(index, "bg_color", e.target.value)
                                 }
@@ -78,7 +81,7 @@ export default function BlockKingdom({
                                 updateBlockData(index, "content", e.target.value)
                             }
                             placeholder="Nhập nội dung"
-                            bg="#1f2852"
+                            bg={isDark ? "#1f2852" : "#ffffff"}
                             borderColor="rgba(148, 163, 184, 0.25)"
                         />
                     </Box>
@@ -90,7 +93,7 @@ export default function BlockKingdom({
                     w="100%"
                     mt={6}
                     borderRadius="lg"
-                    bgColor="#111a3a"
+                    bg={isDark ? "#111a3a" : "#ffffff"}
                 >
                     <Text fontSize="2xl" fontWeight="bold" p={6} textAlign="center" borderRadius="lg">Ảnh + Văn Bản</Text>
                     <Box mb={4} px={4}>
@@ -101,7 +104,7 @@ export default function BlockKingdom({
                                 updateBlockData(index, "heading", e.target.value)
                             }
                             placeholder="Nhập tiêu đề"
-                            bg="#1f2852"
+                            bg={isDark ? "#1f2852" : "#f8fafc"}
                             borderColor="rgba(148, 163, 184, 0.25)"
                         />
                     </Box>
@@ -117,12 +120,12 @@ export default function BlockKingdom({
                                 transition="all 0.2s"
                                 _hover={{
                                     borderColor: "rgba(148, 163, 184, 0.5)",
-                                    bg: "#252d4a"
+                                    bg: isDark ? "#252d4a" : "#eef2f7"
                                 }}
                                 display="flex"
                                 alignItems="center"
                                 borderRadius="md"
-                                bg={block.bg_color || "#1f2852"}
+                                bg={block.bg_color || (isDark ? "#1f2852" : "#f8fafc")}
                                 border="1px solid"
                                 borderColor="rgba(148, 163, 184, 0.25)"
                                 textAlign="left"
@@ -136,7 +139,7 @@ export default function BlockKingdom({
                             <input
                                 ref={colorInputRef}
                                 type="color"
-                                value={block.bg_color || "#1f2852"}
+                                value={block.bg_color || (isDark ? "#1f2852" : "#f8fafc")}
                                 onChange={(e) =>
                                     updateBlockData(index, "bg_color", e.target.value)
                                 }
@@ -153,7 +156,7 @@ export default function BlockKingdom({
                                 onClick={() => backgroundInputRef.current?.click()}
                                 p={2}
                                 borderRadius="md"
-                                bg={"#1f2852"}
+                                bg={isDark ? "#1f2852" : "#f8fafc"}
                                 border="1px solid"
                                 borderColor="rgba(148, 163, 184, 0.25)"
                                 cursor="pointer"
@@ -167,8 +170,8 @@ export default function BlockKingdom({
                                 alignItems="center"
                                 overflow="hidden"
                             >
-                                <Text
-                                    color={block.img_file ? "#e2e8f0" : "#94a3b8"}
+                                    <Text
+                                    color={block.img_file ? (isDark ? "#e2e8f0" : "#0f172a") : (isDark ? "#94a3b8" : "#64748b")}
                                     fontSize="sm"
                                     whiteSpace="nowrap"
                                     overflow="hidden"
@@ -201,7 +204,7 @@ export default function BlockKingdom({
                                 updateBlockData(index, "content", e.target.value)
                             }
                             placeholder="Nhập nội dung"
-                            bg="#1f2852"
+                            bg={isDark ? "#1f2852" : "#ffffff"}
                             borderColor="rgba(148, 163, 184, 0.25)"
                         />
                     </Box>
@@ -213,7 +216,7 @@ export default function BlockKingdom({
                     w="100%"
                     mt={6}
                     borderRadius="lg"
-                    bgColor="#111a3a"
+                    bg={isDark ? "#111a3a" : "#ffffff"}
                 >
                     <Text fontSize="2xl" fontWeight="bold" p={6} textAlign="center" borderRadius="lg">Văn Bản + Ảnh</Text>
                     <Box mb={4} px={4}>
@@ -224,7 +227,7 @@ export default function BlockKingdom({
                                 updateBlockData(index, "heading", e.target.value)
                             }
                             placeholder="Nhập tiêu đề"
-                            bg="#1f2852"
+                            bg={isDark ? "#1f2852" : "#f8fafc"}
                             borderColor="rgba(148, 163, 184, 0.25)"
                         />
                     </Box>
@@ -240,12 +243,12 @@ export default function BlockKingdom({
                                 transition="all 0.2s"
                                 _hover={{
                                     borderColor: "rgba(148, 163, 184, 0.5)",
-                                    bg: "#252d4a"
+                                    bg: isDark ? "#252d4a" : "#eef2f7"
                                 }}
                                 display="flex"
                                 alignItems="center"
                                 borderRadius="md"
-                                bg={block.bg_color || "#1f2852"}
+                                bg={block.bg_color || (isDark ? "#1f2852" : "#f8fafc")}
                                 border="1px solid"
                                 borderColor="rgba(148, 163, 184, 0.25)"
                                 textAlign="left"
@@ -259,7 +262,7 @@ export default function BlockKingdom({
                             <input
                                 ref={colorInputRef}
                                 type="color"
-                                value={block.bg_color || "#1f2852"}
+                                value={block.bg_color || (isDark ? "#1f2852" : "#f8fafc")}
                                 onChange={(e) =>
                                     updateBlockData(index, "bg_color", e.target.value)
                                 }
@@ -276,7 +279,7 @@ export default function BlockKingdom({
                                 onClick={() => backgroundInputRef.current?.click()}
                                 p={2}
                                 borderRadius="md"
-                                bg={"#1f2852"}
+                                bg={isDark ? "#1f2852" : "#f8fafc"}
                                 border="1px solid"
                                 borderColor="rgba(148, 163, 184, 0.25)"
                                 cursor="pointer"
@@ -290,8 +293,8 @@ export default function BlockKingdom({
                                 alignItems="center"
                                 overflow="hidden"
                             >
-                                <Text
-                                    color={block.img_file ? "#e2e8f0" : "#94a3b8"}
+                                    <Text
+                                    color={block.img_file ? (isDark ? "#e2e8f0" : "#0f172a") : (isDark ? "#94a3b8" : "#64748b")}
                                     fontSize="sm"
                                     whiteSpace="nowrap"
                                     overflow="hidden"
@@ -324,7 +327,7 @@ export default function BlockKingdom({
                                 updateBlockData(index, "content", e.target.value)
                             }
                             placeholder="Nhập nội dung"
-                            bg="#1f2852"
+                            bg={isDark ? "#1f2852" : "#ffffff"}
                             borderColor="rgba(148, 163, 184, 0.25)"
                         />
                     </Box>
@@ -336,7 +339,7 @@ export default function BlockKingdom({
                     w="100%"
                     mt={6}
                     borderRadius="lg"
-                    bgColor="#111a3a"
+                    bg={isDark ? "#111a3a" : "#ffffff"}
                 >
                     <Text fontSize="2xl" fontWeight="bold" p={6} textAlign="center" borderRadius="lg">Ảnh Trên + Văn Bản Dưới</Text>
                     <Box mb={4} px={4}>
@@ -347,7 +350,7 @@ export default function BlockKingdom({
                                 updateBlockData(index, "heading", e.target.value)
                             }
                             placeholder="Nhập tiêu đề"
-                            bg="#1f2852"
+                            bg={isDark ? "#1f2852" : "#f8fafc"}
                             borderColor="rgba(148, 163, 184, 0.25)"
                         />
                     </Box>
@@ -363,12 +366,12 @@ export default function BlockKingdom({
                                 transition="all 0.2s"
                                 _hover={{
                                     borderColor: "rgba(148, 163, 184, 0.5)",
-                                    bg: "#252d4a"
+                                    bg: isDark ? "#252d4a" : "#eef2f7"
                                 }}
                                 display="flex"
                                 alignItems="center"
                                 borderRadius="md"
-                                bg={block.bg_color || "#1f2852"}
+                                bg={block.bg_color || (isDark ? "#1f2852" : "#f8fafc")}
                                 border="1px solid"
                                 borderColor="rgba(148, 163, 184, 0.25)"
                                 textAlign="left"
@@ -382,7 +385,7 @@ export default function BlockKingdom({
                             <input
                                 ref={colorInputRef}
                                 type="color"
-                                value={block.bg_color || "#1f2852"}
+                                value={block.bg_color || (isDark ? "#1f2852" : "#f8fafc")}
                                 onChange={(e) =>
                                     updateBlockData(index, "bg_color", e.target.value)
                                 }
@@ -399,14 +402,14 @@ export default function BlockKingdom({
                                 onClick={() => backgroundInputRef.current?.click()}
                                 p={2}
                                 borderRadius="md"
-                                bg={"#1f2852"}
+                                bg={isDark ? "#1f2852" : "#f8fafc"}
                                 border="1px solid"
                                 borderColor="rgba(148, 163, 184, 0.25)"
                                 cursor="pointer"
                                 transition="all 0.2s"
                                 _hover={{
                                     borderColor: "rgba(148, 163, 184, 0.5)",
-                                    bg: "#252d4a"
+                                    bg: isDark ? "#252d4a" : "#eef2f7"
                                 }}
                                 textAlign="left"
                                 display="flex"
@@ -414,7 +417,7 @@ export default function BlockKingdom({
                                 overflow="hidden"
                             >
                                 <Text
-                                    color={block.img_file ? "#e2e8f0" : "#94a3b8"}
+                                    color={block.img_file ? (isDark ? "#e2e8f0" : "#0f172a") : (isDark ? "#94a3b8" : "#64748b")}
                                     fontSize="sm"
                                     whiteSpace="nowrap"
                                     overflow="hidden"
@@ -447,7 +450,7 @@ export default function BlockKingdom({
                                 updateBlockData(index, "content", e.target.value)
                             }
                             placeholder="Nhập nội dung"
-                            bg="#1f2852"
+                            bg={isDark ? "#1f2852" : "#ffffff"}
                             borderColor="rgba(148, 163, 184, 0.25)"
                         />
                     </Box>

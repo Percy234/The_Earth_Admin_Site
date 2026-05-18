@@ -8,7 +8,6 @@ export default function MainLayout() {
     const links = [
         { name: 'Tổng quan', path: '/' },
         { name: 'Quản lý các giới', path: '/kingdoms' },
-        { name: 'Thêm giới mới', path: '/kingdoms/add' },
         { name: 'Thêm giới mới', path: '/kingdoms/addKingdom' },
     ]
 
@@ -17,7 +16,7 @@ export default function MainLayout() {
             <Box display="flex" minH="100vh">
                 <Sidebar links={links} />
 
-                <Box flex="1" minW="0">
+                <Box flex="1" minW="0" ml={{ base: 0, md: '260px', lg: '280px' }}>
                     <ScrollToTop />
                     <Outlet />
                     <Toaster />
