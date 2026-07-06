@@ -3,8 +3,8 @@ import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import Dashboard from "../views/Dashboard";
 //views
-import AddKingdom from "../views/kingdoms/addKingdom";
-import ManageKingdoms from "../views/kingdoms/ManageView";
+import AddKingdom from "../views/kingdoms/AddKingdom";
+import ManageKingdoms from "../views/kingdoms/ManageKingdoms";
 
 
 const router = createBrowserRouter([
@@ -16,19 +16,13 @@ const router = createBrowserRouter([
                 path: "/",
                 element: <Dashboard />
             },
-        ]
-    },
-    {
-        path: "/kingdoms",
-        element: <MainLayout />,
-        children: [
-            {
-                path: "/kingdoms",
-                element: <ManageKingdoms />
-            },
             {
                 path: "/kingdoms/addKingdom",
                 element: <AddKingdom />
+            },
+            {
+                path: "/kingdoms/manage",
+                element: <ManageKingdoms />
             }
         ]
     }

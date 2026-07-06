@@ -127,75 +127,75 @@ export default function Sidebar({ links }) {
     const { open, onOpen, onClose } = useDisclosure()
 
     return (
-    <>
-        {/* Mobile Menu Button */}
-        <Box
-            display={{ base: 'block', md: 'none' }}
-            position="fixed"
-            top={3}
-            left={4}
-            zIndex={1200}
-        >
-            <IconButton
-                onClick={onOpen}
-                aria-label="Open menu"
-                size="sm"
-                bg={isDark ? '#111a3a' : '#ffffff'}
-                color={isDark ? '#e2e8f0' : '#0f172a'}
-                border="1px solid"
-                borderColor={isDark ? '#1d2a5e' : '#e2e8f0'}
-                boxShadow={isDark ? 'none' : 'sm'}
-                _hover={{ bg: isDark ? '#1b2755' : '#f1f5f9' }}
-            >
-                <Icon as={LuMenu} boxSize={5} />
-            </IconButton>
-        </Box>
-
-        {/* Desktop Sidebar */}
-        <Box
-            display={{ base: 'none', md: 'block' }}
-            position="fixed"
-            top={0}
-            left={0}
-            h="100vh"
-            zIndex={120}
-            w={{ md: '260px', lg: '280px' }}
-        >
-            <SidebarContent
-                links={links}
-                isDark={isDark}
-            />
-        </Box>
-
-        {/* Mobile Sidebar */}
-        <Box
-            display={{ base: 'block', md: 'none' }}
-            position="fixed"
-            top={0}
-            left={open ? 0 : '-280px'}
-            w="260px"
-            h="100vh"
-            zIndex={2000}
-            transition="left 0.3s ease"
-        >
-            <SidebarContent
-                links={links}
-                isDark={isDark}
-                onNavigate={onClose}
-            />
-        </Box>
-
-        {/* Backdrop */}
-        {open && (
+        <>
+            {/* Mobile Menu Button */}
             <Box
                 display={{ base: 'block', md: 'none' }}
                 position="fixed"
-                inset={0}
-                bg="rgba(0,0,0,0.4)"
-                zIndex={1500}
-                onClick={onClose}
-            />
-        )}
-    </>
-)
+                top={3}
+                left={4}
+                zIndex={1200}
+            >
+                <IconButton
+                    onClick={onOpen}
+                    aria-label="Open menu"
+                    size="sm"
+                    bg={isDark ? '#111a3a' : '#ffffff'}
+                    color={isDark ? '#e2e8f0' : '#0f172a'}
+                    border="1px solid"
+                    borderColor={isDark ? '#1d2a5e' : '#e2e8f0'}
+                    boxShadow={isDark ? 'none' : 'sm'}
+                    _hover={{ bg: isDark ? '#1b2755' : '#f1f5f9' }}
+                >
+                    <Icon as={LuMenu} boxSize={5} />
+                </IconButton>
+            </Box>
+
+            {/* Desktop Sidebar */}
+            <Box
+                display={{ base: 'none', md: 'block' }}
+                position="fixed"
+                top={0}
+                left={0}
+                h="100vh"
+                zIndex={120}
+                w={{ md: '260px', lg: '280px' }}
+            >
+                <SidebarContent
+                    links={links}
+                    isDark={isDark}
+                />
+            </Box>
+
+            {/* Mobile Sidebar */}
+            <Box
+                display={{ base: 'block', md: 'none' }}
+                position="fixed"
+                top={0}
+                left={open ? 0 : '-280px'}
+                w="260px"
+                h="100vh"
+                zIndex={2000}
+                transition="left 0.3s ease"
+            >
+                <SidebarContent
+                    links={links}
+                    isDark={isDark}
+                    onNavigate={onClose}
+                />
+            </Box>
+
+            {/* Backdrop */}
+            {open && (
+                <Box
+                    display={{ base: 'block', md: 'none' }}
+                    position="fixed"
+                    inset={0}
+                    bg="rgba(0,0,0,0.4)"
+                    zIndex={1500}
+                    onClick={onClose}
+                />
+            )}
+        </>
+    )
 }

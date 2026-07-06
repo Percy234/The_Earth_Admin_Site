@@ -26,8 +26,6 @@ import { Toaster, toaster } from "../../components/ui/Toaster"
 import { Tooltip } from "../../components/ui/Tooltip";
 import TagList from "../../components/ui/TagList";
 import KINGDOM_API from "../../services/kingdom.api";
-import { Label } from "recharts";
-import TopNavbar from "../../components/ui/TopNavbar";
 import ReviewKingdom from "../../components/review/reviewKingdom";
 
 export default function AddKingdom() {
@@ -159,6 +157,8 @@ export default function AddKingdom() {
 
                 setTemplateImgUrl(null);
                 setTemplateBgUrl(null);
+                setThumbnailFileName('');
+                setBackgroundFileName('');
                 setUploadFileKey(Date.now());
             }
 
@@ -178,7 +178,7 @@ export default function AddKingdom() {
 
     const checkFormValidity = () => {
         let errors = [];
-        
+
         if (!formData.normal_name?.trim()) errors.push("Tên thường gọi");
         if (!formData.science_name?.trim()) errors.push("Tên khoa học");
         if (!formData.cell_type) errors.push("Loại tế bào");
@@ -217,32 +217,32 @@ export default function AddKingdom() {
     };
 
     const handleImageInputChange = (e, type) => {
-    const file = e.target.files?.[0];
+        const file = e.target.files?.[0];
 
-    if (file) {
-        if (type === "thumbnail") {
-            setThumbnailFileName(file.name);
+        if (file) {
+            if (type === "thumbnail") {
+                setThumbnailFileName(file.name);
 
-            setTemplateImgUrl(URL.createObjectURL(file));
+                setTemplateImgUrl(URL.createObjectURL(file));
 
-            setFormData(prev => ({
-                ...prev,
-                thumbnail_file: file
-            }));
+                setFormData(prev => ({
+                    ...prev,
+                    thumbnail_file: file
+                }));
+            }
+
+            else if (type === "background") {
+                setBackgroundFileName(file.name);
+
+                setTemplateBgUrl(URL.createObjectURL(file));
+
+                setFormData(prev => ({
+                    ...prev,
+                    background_file: file
+                }));
+            }
         }
-
-        else if (type === "background") {
-            setBackgroundFileName(file.name);
-
-            setTemplateBgUrl(URL.createObjectURL(file));
-
-            setFormData(prev => ({
-                ...prev,
-                background_file: file
-            }));
-        }
-    }
-};
+    };
 
     const addDescriptionBlock = (type) => {
         const newBlock = {
@@ -300,11 +300,10 @@ export default function AddKingdom() {
         return brightness > 155 ? "#0F0F0F" : "#FFFFFF";
     }
     const textColor = getContrastColor(formData.theme_color);
-    const colorInputRef = useRef(null);
     const bgInputRef = useRef(null);
     const thumbInputRef = useRef(null);
     const [openSelect, setOpenSelect] = useState(null);
-    
+
     const [templateBgUrl, setTemplateBgUrl] = useState(null);
     useEffect(() => {
         return () => {
@@ -313,24 +312,10 @@ export default function AddKingdom() {
         };
     }, [templateImgUrl, templateBgUrl]);
     return (
-        <Box minH="100vh" bg={isDark ? "#0b1026" : "#f5f7fb"}>
-            <Box
-                position="fixed"
-                top={0}
-                left={{ base: "260px", lg: "280px" }}
-                right={0}
-                zIndex={10}
-                bg={isDark ? "#0b1026" : "#f5f7fb"}
-            >
-                <TopNavbar />
-            </Box>
-
-            <Box h={{ base: "96px", md: "60px" }} />
-
-            <Box px={4} pb={4}>
+        <Box>
                 <Heading fontSize="40px" my={4}>Thêm giới mới</Heading>
                 <Grid templateColumns="repeat(12, 1fr)" gap={6}>
-                    <GridItem colSpan={8}>
+                    <GridItem colSpan={{ base: 12, lg: 8 }}>
                         <Box
                             w="100%"
                             p={6}
@@ -340,8 +325,8 @@ export default function AddKingdom() {
                             <Heading fontWeight="bold" mb={4} fontSize={"2xl"} textAlign="center">Thông tin cơ bản</Heading>
                             <Stack spacing={6}>
                                 {/* Tên */}
-                                <Grid 
-                                    templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} 
+                                <Grid
+                                    templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
                                     gap={4}
                                     my={2}
                                 >
@@ -369,7 +354,7 @@ export default function AddKingdom() {
                                 {/* Ảnh */}
                                 <Grid
                                     templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-                                    gap={4} 
+                                    gap={4}
                                     my={2}
                                 >
                                     <GridItem>
@@ -440,21 +425,18 @@ export default function AddKingdom() {
                                 {/* Tiêu chí phân loại */}
                                 <Grid
                                     templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-                                    gap={4} 
+                                    gap={4}
                                     my={2}
                                 >
                                     <GridItem>
                                         <Stack spacing={3}>
                                             <Text mb={1}>Loại tế bào</Text>
-                                            <Stack direction="row" gap={6}>
+                                            <Stack direction={{ base: "column", sm: "row" }} gap={{ base: 2, sm: 6 }} wrap="wrap">
                                                 {TAXONOMY_OPTIONS.cell.map((option) => (
                                                     <label
                                                         key={option.value}
+                                                        className="flex items-center cursor-pointer text-xs md:text-sm lg:text-base gap-1.5 md:gap-2.5"
                                                         style={{
-                                                            display: "flex",
-                                                            alignItems: "center",
-                                                            gap: "10px",
-                                                            cursor: "pointer",
                                                             color: isDark ? "white" : "#0f172a",
                                                         }}
                                                     >
@@ -463,17 +445,17 @@ export default function AddKingdom() {
                                                             name="cell_type"
                                                             value={option.value}
                                                             checked={formData.cell_type === option.value}
-                                                            onChange={(e) => 
+                                                            onChange={(e) =>
                                                                 setFormData({
                                                                     ...formData,
                                                                     cell_type: e.target.value,
                                                                 })
                                                             }
+                                                            className="w-4 h-4 md:w-5 md:h-5 cursor-pointer transition-all duration-200"
                                                             style={{
                                                                 appearance: "none",
-                                                                width: "20px",
-                                                                height: "20px",
-                                                                border: `2px solid ${isDark ? "white" : "#0f172a"}`,
+                                                                border: "2px solid",
+                                                                borderColor: isDark ? "white" : "#0f172a",
                                                                 borderRadius: "50%",
                                                                 backgroundColor:
                                                                     formData.cell_type === option.value
@@ -483,8 +465,6 @@ export default function AddKingdom() {
                                                                     formData.cell_type === option.value
                                                                         ? "inset 0 0 0 4px #111a3a"
                                                                         : "none",
-                                                                transition: "all 0.2s ease",
-                                                                cursor: "pointer",
                                                             }}
                                                         />
                                                         {option.label}
@@ -496,15 +476,12 @@ export default function AddKingdom() {
                                     <GridItem>
                                         <Stack spacing={3}>
                                             <Text mb={1}>Loại dinh dưỡng</Text>
-                                            <Stack direction="row" gap={6}>
+                                            <Stack direction={{ base: "column", sm: "row" }} gap={{ base: 2, sm: 6 }} wrap="wrap">
                                                 {TAXONOMY_OPTIONS.nutrition.map((option) => (
                                                     <label
                                                         key={option.value}
+                                                        className="flex items-center cursor-pointer text-xs md:text-sm lg:text-base gap-1.5 md:gap-2.5"
                                                         style={{
-                                                            display: "flex",
-                                                            alignItems: "center",
-                                                            gap: "10px",
-                                                            cursor: "pointer",
                                                             color: isDark ? "white" : "#0f172a",
                                                         }}
                                                     >
@@ -519,11 +496,11 @@ export default function AddKingdom() {
                                                                     nutrition_mode: e.target.value,
                                                                 })
                                                             }
+                                                            className="w-4 h-4 md:w-5 md:h-5 cursor-pointer transition-all duration-200"
                                                             style={{
                                                                 appearance: "none",
-                                                                width: "20px",
-                                                                height: "20px",
-                                                                border: `2px solid ${isDark ? "white" : "#0f172a"}`,
+                                                                border: "2px solid",
+                                                                borderColor: isDark ? "white" : "#0f172a",
                                                                 borderRadius: "50%",
                                                                 backgroundColor:
                                                                     formData.nutrition_mode === option.value
@@ -533,8 +510,6 @@ export default function AddKingdom() {
                                                                     formData.nutrition_mode === option.value
                                                                         ? "inset 0 0 0 4px #111a3a"
                                                                         : "none",
-                                                                transition: "all 0.2s ease",
-                                                                cursor: "pointer",
                                                             }}
                                                         />
                                                         {option.label}
@@ -552,15 +527,12 @@ export default function AddKingdom() {
                                     <GridItem>
                                         <Stack spacing={3}>
                                             <Text mb={1}>Loại sinh sản</Text>
-                                            <Stack direction="row" gap={6}>
+                                            <Stack direction={{ base: "column", sm: "row" }} gap={{ base: 2, sm: 6 }} wrap="wrap">
                                                 {TAXONOMY_OPTIONS.reproduction.map((option) => (
                                                     <label
                                                         key={option.value}
+                                                        className="flex items-center cursor-pointer text-xs md:text-sm lg:text-base gap-1.5 md:gap-2.5"
                                                         style={{
-                                                            display: "flex",
-                                                            alignItems: "center",
-                                                            gap: "10px",
-                                                            cursor: "pointer",
                                                             color: isDark ? "white" : "#0f172a",
                                                         }}
                                                     >
@@ -569,17 +541,17 @@ export default function AddKingdom() {
                                                             name="reproduction_type"
                                                             value={option.value}
                                                             checked={formData.reproduction_type === option.value}
-                                                            onChange={(e) => 
+                                                            onChange={(e) =>
                                                                 setFormData({
                                                                     ...formData,
                                                                     reproduction_type: e.target.value,
                                                                 })
                                                             }
+                                                            className="w-4 h-4 md:w-5 md:h-5 cursor-pointer transition-all duration-200"
                                                             style={{
                                                                 appearance: "none",
-                                                                width: "20px",
-                                                                height: "20px",
-                                                                border: `2px solid ${isDark ? "white" : "#0f172a"}`,
+                                                                border: "2px solid",
+                                                                borderColor: isDark ? "white" : "#0f172a",
                                                                 borderRadius: "50%",
                                                                 backgroundColor:
                                                                     formData.reproduction_type === option.value
@@ -589,8 +561,6 @@ export default function AddKingdom() {
                                                                     formData.reproduction_type === option.value
                                                                         ? "inset 0 0 0 4px #111a3a"
                                                                         : "none",
-                                                                transition: "all 0.2s ease",
-                                                                cursor: "pointer",
                                                             }}
                                                         />
                                                         {option.label}
@@ -602,33 +572,40 @@ export default function AddKingdom() {
                                     <GridItem>
                                         <Stack spacing={3}>
                                             <Text mb={1}>Màu chủ đề</Text>
-                                            <Box
-                                                as="button"
-                                                type="button"
-                                                w="100%"
-                                                onClick={() => colorInputRef.current?.click()}
-                                                p={2}
-                                                borderRadius="md"
-                                                bg={formData.theme_color || "#1f2852"}
-                                                border="1px solid"
-                                                borderColor="rgba(148, 163, 184, 0.25)"
-                                                cursor="pointer"
-                                                transition="all 0.2s"
-                                                _hover={{
-                                                    borderColor: "rgba(148, 163, 184, 0.5)",
-                                                }}
-                                                textAlign="left"
-                                            >
-                                                <Text fontSize="sm" color={textColor}>
-                                                    {formData.theme_color ? formData.theme_color : "Chọn màu chủ đề"}
-                                                </Text>
-                                            </Box>
-                                            <input
-                                                ref={colorInputRef}
-                                                type="color"
-                                                onChange={(e) => setFormData({ ...formData, theme_color: e.target.value })}
-                                                style={{ display: "none" }}
-                                            />
+                                            <Stack direction="row" gap={2} w="100%">
+                                                <Input
+                                                    placeholder="VD: #2a69ac"
+                                                    value={formData.theme_color}
+                                                    onChange={(e) => setFormData({ ...formData, theme_color: e.target.value })}
+                                                    bg={isDark ? "#1f2852" : "#ffffff"}
+                                                    borderColor="rgba(148, 163, 184, 0.25)"
+                                                />
+                                                <Box
+                                                    position="relative"
+                                                    w="40px"
+                                                    h="40px"
+                                                    borderRadius="md"
+                                                    border="1px solid"
+                                                    borderColor="rgba(148, 163, 184, 0.25)"
+                                                    bg={formData.theme_color || "#1f2852"}
+                                                    flexShrink={0}
+                                                >
+                                                    <input
+                                                        type="color"
+                                                        value={formData.theme_color || "#1f2852"}
+                                                        onChange={(e) => setFormData({ ...formData, theme_color: e.target.value })}
+                                                        style={{
+                                                            position: "absolute",
+                                                            top: 0,
+                                                            left: 0,
+                                                            width: "100%",
+                                                            height: "100%",
+                                                            opacity: 0,
+                                                            cursor: "pointer",
+                                                        }}
+                                                    />
+                                                </Box>
+                                            </Stack>
                                         </Stack>
                                     </GridItem>
                                 </Grid>
@@ -660,6 +637,7 @@ export default function AddKingdom() {
                                         index={index}
                                         updateBlockData={updateBlockData}
                                         handleBlockImageChange={handleBlockImageChange}
+                                        getContrastColor={getContrastColor}
                                         textColor={textColor}
                                         themeColor={formData.theme_color}
                                     />
@@ -675,7 +653,7 @@ export default function AddKingdom() {
                         >
                             <Text
                                 fontSize="2xl"
-                                fontWeight="bold" 
+                                fontWeight="bold"
                                 p={2}
                                 borderRadius="lg"
                                 textAlign="center"
@@ -703,7 +681,7 @@ export default function AddKingdom() {
                                         border="1px solid"
                                         borderColor="rgba(148, 163, 184, 0.25)"
                                     >
-                                        <Text>Văn Bản + Ảnh</Text>
+                                        <Text>Ảnh + Văn Bản</Text>
                                     </Button>
                                     <Button
                                         onClick={() => addDescriptionBlock("image_right")}
@@ -713,7 +691,7 @@ export default function AddKingdom() {
                                         border="1px solid"
                                         borderColor="rgba(148, 163, 184, 0.25)"
                                     >
-                                        <Text>Ảnh + Văn Bản</Text>
+                                        <Text>Văn Bản + Ảnh</Text>
                                     </Button>
                                     <Button
                                         onClick={() => addDescriptionBlock("image_top")}
@@ -740,7 +718,7 @@ export default function AddKingdom() {
                         </Button>
                     </GridItem>
                     {/* Review Page */}
-                    <GridItem colSpan={4}>
+                    <GridItem colSpan={{ base: 12, lg: 4 }}>
                         <ReviewKingdom
                             formData={formData}
                             templateImgUrl={templateImgUrl}
@@ -749,7 +727,6 @@ export default function AddKingdom() {
                         />
                     </GridItem>
                 </Grid>
-            </Box>
         </Box>
     )
 }

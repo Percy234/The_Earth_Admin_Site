@@ -60,6 +60,15 @@ const KINGDOM_API = {
             console.log("Lỗi upload block image:", error);
             throw error;
         }
+    },
+    deleteKingdom: async (id) => {
+        try {
+            const response = await axios.delete(`${APP_CONFIG.BASE_API}/kingdoms/${id}`);
+            return response.data;
+        } catch (error) {
+            console.log("Lỗi xóa giới:", error);
+            throw error;
+        }
     }
 }
 

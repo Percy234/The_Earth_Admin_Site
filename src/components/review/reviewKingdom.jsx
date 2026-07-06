@@ -4,18 +4,18 @@ import { LuUpload } from "react-icons/lu";
 import { TAXONOMY_OPTIONS } from "../../config/data.config";
 
 function getContrastColor(hex) {
-        if (!hex) return "#FFFFFF";
+    if (!hex) return "#FFFFFF";
 
-        hex = hex.replace("#", "");
+    hex = hex.replace("#", "");
 
-        const r = parseInt(hex.substring(0, 2), 16);
-        const g = parseInt(hex.substring(2, 4), 16);
-        const b = parseInt(hex.substring(4, 6), 16);
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
 
-        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
 
-        return brightness > 155 ? "#0F0F0F" : "#FFFFFF";
-    }
+    return brightness > 155 ? "#0F0F0F" : "#FFFFFF";
+}
 
 export default function ReviewKingdom({
     formData,
@@ -120,10 +120,7 @@ export default function ReviewKingdom({
                 <Grid
                     minH="100px"
                     alignItems="center"
-                    templateColumns={{
-                        base: "1fr",
-                        md: "repeat(4, 1fr)"
-                    }}
+                    templateColumns="repeat(4, 1fr)"
                     gap={2}
                 >
                     {/* Cell Type */}
@@ -261,7 +258,7 @@ export default function ReviewKingdom({
                                             {block.heading || "Tiêu đề"}
                                         </Text>
 
-                                        <Text 
+                                        <Text
                                             color={blockTextColor}
                                             fontSize="8px"
                                             textAlign="center"
@@ -325,7 +322,7 @@ export default function ReviewKingdom({
                                                             h="100%"
                                                             objectFit="cover"
                                                         />
-                                                        ) : (
+                                                    ) : (
                                                         <Box
                                                             w="100%"
                                                             h="100%"
@@ -338,7 +335,7 @@ export default function ReviewKingdom({
                                                         >
                                                             Chưa tải lên ảnh
                                                         </Box>
-                                                        )
+                                                    )
                                                     }
                                                 </Box>
                                             </GridItem>
@@ -405,7 +402,7 @@ export default function ReviewKingdom({
                                                 </Text>
                                             </GridItem>
                                             <GridItem
-                                            colSpan={9}
+                                                colSpan={9}
                                             >
                                                 <Box
                                                     w="100%"
@@ -421,7 +418,7 @@ export default function ReviewKingdom({
                                                             h="100%"
                                                             objectFit="cover"
                                                         />
-                                                        ) : (
+                                                    ) : (
                                                         <Box
                                                             w="100%"
                                                             h="100%"
@@ -434,7 +431,7 @@ export default function ReviewKingdom({
                                                         >
                                                             Chưa tải lên ảnh
                                                         </Box>
-                                                        )
+                                                    )
                                                     }
                                                 </Box>
                                             </GridItem>
@@ -468,7 +465,7 @@ export default function ReviewKingdom({
                                         >
                                             {block.heading || "Tiêu đề"}
                                         </Text>
-                                        <Grid 
+                                        <Grid
                                             templateColumns="1fr"
                                             w="70%"
                                             mx="auto"
@@ -491,7 +488,7 @@ export default function ReviewKingdom({
                                                             h="100%"
                                                             objectFit="cover"
                                                         />
-                                                        ) : (
+                                                    ) : (
                                                         <Box
                                                             w="100%"
                                                             h="100%"
@@ -504,7 +501,7 @@ export default function ReviewKingdom({
                                                         >
                                                             Chưa tải lên ảnh
                                                         </Box>
-                                                        )
+                                                    )
                                                     }
                                                 </Box>
                                             </GridItem>
