@@ -5,6 +5,7 @@ import Dashboard from "../views/Dashboard";
 //views
 import AddKingdom from "../views/kingdoms/AddKingdom";
 import ManageKingdoms from "../views/kingdoms/ManageKingdoms";
+import AddPhylum from "../views/phylums/AddPhylum";
 
 
 const router = createBrowserRouter([
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
             {
                 path: "/kingdoms/manage",
                 element: <ManageKingdoms />
+            },
+            {
+                path: "/phylums/addPhylum",
+                element: <AddPhylum />
             }
         ]
     }
