@@ -18,6 +18,8 @@ import { useTheme } from "next-themes";
 
 //method
 import { TAXONOMY_OPTIONS } from "../../config/data.config";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import APP_CONFIG from "../../config/app.config";
 
 //components
 import BlockKingdom from "../../components/form/BlockKingdom";
@@ -27,6 +29,11 @@ import PHYLUM_API from "../../services/phylum.api";
 import ReviewKingdom from "../../components/review/reviewKingdom";
 
 export default function AddPhylum() {
+    const [searchParams] = useSearchParams();
+    const id = searchParams.get("id");
+    const isEdit = !!id;
+    const navigate = useNavigate();
+
     const { theme } = useTheme();
     const isDark = theme === "dark";
     const [uploadFileKey, setUploadFileKey] = useState(Date.now());
@@ -54,9 +61,9 @@ export default function AddPhylum() {
     });
 
     useEffect(() => {
-        document.title = "Admin | Thêm Ngành Mới";
-        fetchKingdoms();
-    }, []);
+        document.title = isEdit ? "Admin | Chỉnh Sửa Ngành" : "Admin | Thêm Ngành Mới";
+        fetchKingdomsAndPhylum();
+    }, [id, isEdit]);
 
     useEffect(() => {
         return () => {
@@ -66,21 +73,46 @@ export default function AddPhylum() {
     }, [templateImgUrl, templateBgUrl]);
 
     // ============== Handlers ===================
-    const fetchKingdoms = async () => {
+    const fetchKingdomsAndPhylum = async () => {
         try {
             const res = await KINGDOM_API.getAll();
-            if (res && res.status === "success") {
-                setAllKingdoms(res.data);
-            } else if (Array.isArray(res)) {
-                setAllKingdoms(res);
-            } else if (res && res.data) {
-                setAllKingdoms(res.data);
+            const listKingdoms = res.data || res;
+            setAllKingdoms(listKingdoms);
+
+            if (isEdit) {
+                const resPhylums = await PHYLUM_API.getAll();
+                const listPhylums = resPhylums.data || resPhylums;
+                const currentPhylum = listPhylums.find(p => (p._id || p.id) === id);
+                if (currentPhylum) {
+                    setFormData({
+                        kingdom_id: currentPhylum.kingdom_id || "",
+                        normal_name: currentPhylum.normal_name || "",
+                        science_name: currentPhylum.science_name || "",
+                        cell_type: currentPhylum.cell_type || "",
+                        nutrition_mode: currentPhylum.nutrition_mode || "",
+                        reproduction_type: currentPhylum.reproduction_type || "",
+                        description: currentPhylum.description || [],
+                        thumbnail_url: currentPhylum.thumbnail_url || null,
+                        background_url: currentPhylum.background_url || null,
+                        theme_color: currentPhylum.theme_color || "",
+                        thumbnail_file: null,
+                        background_file: null,
+                    });
+                    if (currentPhylum.thumbnail_url) {
+                        setTemplateImgUrl(currentPhylum.thumbnail_url.startsWith("http") || currentPhylum.thumbnail_url.startsWith("blob:") ? currentPhylum.thumbnail_url : `${APP_CONFIG.BASE_API}/${currentPhylum.thumbnail_url}`);
+                        setThumbnailFileName(currentPhylum.thumbnail_url.split('/').pop());
+                    }
+                    if (currentPhylum.background_url) {
+                        setTemplateBgUrl(currentPhylum.background_url.startsWith("http") || currentPhylum.background_url.startsWith("blob:") ? currentPhylum.background_url : `${APP_CONFIG.BASE_API}/${currentPhylum.background_url}`);
+                        setBackgroundFileName(currentPhylum.background_url.split('/').pop());
+                    }
+                }
             }
         } catch (error) {
-            console.error("Lỗi khi tải danh sách giới:", error);
+            console.error("Lỗi khi tải dữ liệu:", error);
             toaster.create({
                 title: "Lỗi tải dữ liệu",
-                description: "Không thể tải danh sách các giới.",
+                description: "Không thể tải danh sách các giới hoặc thông tin ngành.",
                 type: "error"
             });
         }
@@ -120,8 +152,8 @@ export default function AddPhylum() {
         }
 
         try {
-            let thumbnailUrl = null;
-            let backgroundUrl = null;
+            let thumbnailUrl = formData.thumbnail_url;
+            let backgroundUrl = formData.background_url;
 
             if (formData.thumbnail_file) {
                 const resThumb = await PHYLUM_API.uploadThumbnail(formData.thumbnail_file);
@@ -159,35 +191,43 @@ export default function AddPhylum() {
 
             console.log("Sending Phylum data:", payload);
 
-            const res = await PHYLUM_API.createPhylum(payload);
+            const res = isEdit 
+                ? await PHYLUM_API.updatePhylum(id, payload)
+                : await PHYLUM_API.createPhylum(payload);
 
             toaster.create({
                 title: res.title || (res.status === "success" ? "Thành công" : "Lỗi"),
-                description: res.message || "Tạo ngành mới thành công",
+                description: res.message || (isEdit ? "Cập nhật ngành thành công" : "Tạo ngành mới thành công"),
                 type: res.status === "success" ? "success" : "error",
             });
 
             if (res.status === "success") {
-                setFormData({
-                    kingdom_id: "",
-                    normal_name: "",
-                    science_name: "",
-                    cell_type: "",
-                    nutrition_mode: "",
-                    reproduction_type: "",
-                    description: [],
-                    thumbnail_url: null,
-                    background_url: null,
-                    theme_color: "",
-                    thumbnail_file: null,
-                    background_file: null,
-                });
+                if (isEdit) {
+                    setTimeout(() => {
+                        navigate("/phylums/manage");
+                    }, 1500);
+                } else {
+                    setFormData({
+                        kingdom_id: "",
+                        normal_name: "",
+                        science_name: "",
+                        cell_type: "",
+                        nutrition_mode: "",
+                        reproduction_type: "",
+                        description: [],
+                        thumbnail_url: null,
+                        background_url: null,
+                        theme_color: "",
+                        thumbnail_file: null,
+                        background_file: null,
+                    });
 
-                setTemplateImgUrl(null);
-                setTemplateBgUrl(null);
-                setThumbnailFileName('');
-                setBackgroundFileName('');
-                setUploadFileKey(Date.now());
+                    setTemplateImgUrl(null);
+                    setTemplateBgUrl(null);
+                    setThumbnailFileName('');
+                    setBackgroundFileName('');
+                    setUploadFileKey(Date.now());
+                }
             }
 
         } catch (error) {
@@ -305,7 +345,7 @@ export default function AddPhylum() {
 
     return (
         <Box>
-            <Heading fontSize="40px" my={4}>Thêm ngành mới</Heading>
+            <Heading fontSize="40px" my={4}>{isEdit ? "Chỉnh sửa ngành" : "Thêm ngành mới"}</Heading>
             <Grid templateColumns="repeat(12, 1fr)" gap={6}>
                 <GridItem colSpan={{ base: 12, lg: 8 }}>
                     <Box

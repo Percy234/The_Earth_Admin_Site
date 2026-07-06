@@ -73,6 +73,15 @@ const PHYLUM_API = {
             console.log("Lỗi xóa ngành:", error);
             throw error;
         }
+    },
+    updatePhylum: async (id, phylumData) => {
+        try {
+            const response = await axios.put(`${APP_CONFIG.BASE_API}/phylums/${id}`, phylumData);
+            return response.data;
+        } catch (error) {
+            console.log("Lỗi cập nhật ngành:", error);
+            throw error;
+        }
     }
 }
 

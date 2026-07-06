@@ -69,6 +69,15 @@ const KINGDOM_API = {
             console.log("Lỗi xóa giới:", error);
             throw error;
         }
+    },
+    updateKingdom: async (id, kingdomData) => {
+        try {
+            const response = await axios.put(`${APP_CONFIG.BASE_API}/kingdoms/${id}`, kingdomData);
+            return response.data;
+        } catch (error) {
+            console.log("Lỗi cập nhật giới:", error);
+            throw error;
+        }
     }
 }
 

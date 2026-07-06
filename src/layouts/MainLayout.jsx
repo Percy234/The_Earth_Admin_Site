@@ -11,7 +11,7 @@ export default function MainLayout() {
     const isDark = theme === 'dark';
     const links = [
         { name: 'Tổng quan', path: '/' },
-        { name: 'Danh sách các giới', path: '/kingdoms/manage' },
+        { name: 'Danh sách', path: '/kingdoms/manage' },
         { name: 'Thêm giới mới', path: '/kingdoms/addKingdom' },
         { name: 'Thêm ngành mới', path: '/phylums/addPhylum' },
     ];

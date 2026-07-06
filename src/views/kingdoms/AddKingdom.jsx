@@ -19,6 +19,7 @@ import { useTheme } from "next-themes";
 
 //method
 import { TAXONOMY_OPTIONS } from "../../config/data.config";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 //components
 import BlockKingdom from "../../components/form/BlockKingdom";
@@ -27,12 +28,19 @@ import { Tooltip } from "../../components/ui/Tooltip";
 import TagList from "../../components/ui/TagList";
 import KINGDOM_API from "../../services/kingdom.api";
 import ReviewKingdom from "../../components/review/reviewKingdom";
+import APP_CONFIG from "../../config/app.config";
 
 export default function AddKingdom() {
+    const [searchParams] = useSearchParams();
+    const id = searchParams.get("id");
+    const isEdit = !!id;
+    const navigate = useNavigate();
+
     const { theme } = useTheme();
     const isDark = theme === "dark";
     const [uploadFileKey, setUploadFileKey] = useState(Date.now());
     const [templateImgUrl, setTemplateImgUrl] = useState(null);
+    const [templateBgUrl, setTemplateBgUrl] = useState(null);
     const [backgroundFileName, setBackgroundFileName] = useState('');
     const [thumbnailFileName, setThumbnailFileName] = useState('');
     const [allKingdoms, setAllKingdoms] = useState([]);
@@ -53,14 +61,42 @@ export default function AddKingdom() {
     });
 
     useEffect(() => {
-        document.title = "Admin | Thêm Giới Mới";
+        document.title = isEdit ? "Admin | Chỉnh Sửa Giới" : "Admin | Thêm Giới Mới";
         fetchAllKingdoms();
-    }, []);
+    }, [id, isEdit]);
 
     // ============== Handlers ===================
     const fetchAllKingdoms = async () => {
         const kingdoms = await KINGDOM_API.getAll();
-        setAllKingdoms(kingdoms.data);
+        const list = kingdoms.data || kingdoms;
+        setAllKingdoms(list);
+
+        if (isEdit && list) {
+            const currentKingdom = list.find(k => (k._id || k.id) === id);
+            if (currentKingdom) {
+                setFormData({
+                    normal_name: currentKingdom.normal_name || "",
+                    science_name: currentKingdom.science_name || "",
+                    cell_type: currentKingdom.cell_type || "",
+                    nutrition_mode: currentKingdom.nutrition_mode || "",
+                    reproduction_type: currentKingdom.reproduction_type || "",
+                    description: currentKingdom.description || [],
+                    thumbnail_url: currentKingdom.thumbnail_url || null,
+                    background_url: currentKingdom.background_url || null,
+                    theme_color: currentKingdom.theme_color || "",
+                    thumbnail_file: null,
+                    background_file: null,
+                });
+                if (currentKingdom.thumbnail_url) {
+                    setTemplateImgUrl(currentKingdom.thumbnail_url.startsWith("http") || currentKingdom.thumbnail_url.startsWith("blob:") ? currentKingdom.thumbnail_url : `${APP_CONFIG.BASE_API}/${currentKingdom.thumbnail_url}`);
+                    setThumbnailFileName(currentKingdom.thumbnail_url.split('/').pop());
+                }
+                if (currentKingdom.background_url) {
+                    setTemplateBgUrl(currentKingdom.background_url.startsWith("http") || currentKingdom.background_url.startsWith("blob:") ? currentKingdom.background_url : `${APP_CONFIG.BASE_API}/${currentKingdom.background_url}`);
+                    setBackgroundFileName(currentKingdom.background_url.split('/').pop());
+                }
+            }
+        }
     };
     const uploadBlockImages = async (description) => {
         return await Promise.all(
@@ -95,8 +131,8 @@ export default function AddKingdom() {
         }
 
         try {
-            let thumbnailUrl = null;
-            let backgroundUrl = null;
+            let thumbnailUrl = formData.thumbnail_url;
+            let backgroundUrl = formData.background_url;
 
             if (formData.thumbnail_file) {
                 const resThumb = await KINGDOM_API.uploadThumbnail(formData.thumbnail_file);
@@ -132,34 +168,42 @@ export default function AddKingdom() {
 
             console.log("Sending data:", payload);
 
-            const res = await KINGDOM_API.createKingdom(payload);
+            const res = isEdit 
+                ? await KINGDOM_API.updateKingdom(id, payload)
+                : await KINGDOM_API.createKingdom(payload);
 
             toaster.create({
                 title: res.title || (res.status === "success" ? "Thành công" : "Lỗi"),
-                description: res.message,
+                description: res.message || (isEdit ? "Cập nhật giới thành công" : "Thêm giới mới thành công"),
                 type: res.status === "success" ? "success" : "error",
             });
 
             if (res.status === "success") {
-                setFormData({
-                    normal_name: "",
-                    science_name: "",
-                    cell_type: "",
-                    nutrition_mode: "",
-                    reproduction_type: "",
-                    description: [],
-                    thumbnail_url: null,
-                    background_url: null,
-                    theme_color: "",
-                    thumbnail_file: null,
-                    background_file: null,
-                });
+                if (isEdit) {
+                    setTimeout(() => {
+                        navigate("/kingdoms/manage");
+                    }, 1500);
+                } else {
+                    setFormData({
+                        normal_name: "",
+                        science_name: "",
+                        cell_type: "",
+                        nutrition_mode: "",
+                        reproduction_type: "",
+                        description: [],
+                        thumbnail_url: null,
+                        background_url: null,
+                        theme_color: "",
+                        thumbnail_file: null,
+                        background_file: null,
+                    });
 
-                setTemplateImgUrl(null);
-                setTemplateBgUrl(null);
-                setThumbnailFileName('');
-                setBackgroundFileName('');
-                setUploadFileKey(Date.now());
+                    setTemplateImgUrl(null);
+                    setTemplateBgUrl(null);
+                    setThumbnailFileName('');
+                    setBackgroundFileName('');
+                    setUploadFileKey(Date.now());
+                }
             }
 
         } catch (error) {
@@ -304,7 +348,6 @@ export default function AddKingdom() {
     const thumbInputRef = useRef(null);
     const [openSelect, setOpenSelect] = useState(null);
 
-    const [templateBgUrl, setTemplateBgUrl] = useState(null);
     useEffect(() => {
         return () => {
             if (templateImgUrl) URL.revokeObjectURL(templateImgUrl);
@@ -313,7 +356,7 @@ export default function AddKingdom() {
     }, [templateImgUrl, templateBgUrl]);
     return (
         <Box>
-                <Heading fontSize="40px" my={4}>Thêm giới mới</Heading>
+                <Heading fontSize="40px" my={4}>{isEdit ? "Chỉnh sửa giới" : "Thêm giới mới"}</Heading>
                 <Grid templateColumns="repeat(12, 1fr)" gap={6}>
                     <GridItem colSpan={{ base: 12, lg: 8 }}>
                         <Box
