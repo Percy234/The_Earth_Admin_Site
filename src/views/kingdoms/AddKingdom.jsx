@@ -27,7 +27,7 @@ import { Toaster, toaster } from "../../components/ui/Toaster"
 import { Tooltip } from "../../components/ui/Tooltip";
 import TagList from "../../components/ui/TagList";
 import KINGDOM_API from "../../services/kingdom.api";
-import ReviewKingdom from "../../components/review/reviewKingdom";
+import Review from "../../components/review/Review";
 import APP_CONFIG from "../../config/app.config";
 
 export default function AddKingdom() {
@@ -762,7 +762,7 @@ export default function AddKingdom() {
                     </GridItem>
                     {/* Review Page */}
                     <GridItem colSpan={{ base: 12, lg: 4 }}>
-                        <ReviewKingdom
+                        <Review
                             formData={formData}
                             templateImgUrl={templateImgUrl}
                             templateBgUrl={templateBgUrl}

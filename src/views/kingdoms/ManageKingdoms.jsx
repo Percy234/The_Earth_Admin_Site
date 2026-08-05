@@ -18,6 +18,7 @@ import { LuSearch, LuTrash2, LuEye, LuUpload, LuPencil } from "react-icons/lu";
 
 import KINGDOM_API from "../../services/kingdom.api";
 import PHYLUM_API from "../../services/phylum.api";
+import CLASS_API from "../../services/class.api";
 import APP_CONFIG from "../../config/app.config";
 import { TAXONOMY_OPTIONS } from "../../config/data.config";
 import { Toaster, toaster } from "../../components/ui/Toaster";
@@ -31,6 +32,7 @@ export default function ManageKingdoms() {
     const [activeTab, setActiveTab] = useState("kingdom");
     const [kingdoms, setKingdoms] = useState([]);
     const [phylums, setPhylums] = useState([]);
+    const [classes, setClasses] = useState([]);
     const [searchParams] = useSearchParams();
     const searchKeyword = searchParams.get("search") || "";
     const [isLoading, setIsLoading] = useState(true);
@@ -52,11 +54,16 @@ export default function ManageKingdoms() {
             const resPhylums = await PHYLUM_API.getAll();
             const listPhylums = resPhylums.data || resPhylums;
             setPhylums(listPhylums);
+
+            // Lấy lớp
+            const resClasses = await CLASS_API.getAll();
+            const listClasses = resClasses.data || resClasses;
+            setClasses(listClasses);
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu phân loài:", error);
             toaster.create({
                 title: "Lỗi tải dữ liệu",
-                description: "Không thể tải danh sách giới hoặc ngành.",
+                description: "Không thể tải danh sách phân loài.",
                 type: "error"
             });
         } finally {
@@ -126,6 +133,37 @@ export default function ManageKingdoms() {
         }
     };
 
+    const handleDeleteClass = async (id, name) => {
+        if (!window.confirm(`Bạn có chắc chắn muốn xóa lớp "${name}" không? Hành động này không thể hoàn tác.`)) {
+            return;
+        }
+
+        try {
+            const res = await CLASS_API.deleteClass(id);
+            if (res && res.status === "success") {
+                toaster.create({
+                    title: "Xóa thành công",
+                    description: res.message || `Đã xóa lớp "${name}" thành công.`,
+                    type: "success"
+                });
+                setClasses(prev => prev.filter(c => c._id !== id && c.id !== id));
+            } else {
+                toaster.create({
+                    title: "Lỗi xóa lớp",
+                    description: res?.message || "Không thể xóa lớp này.",
+                    type: "error"
+                });
+            }
+        } catch (error) {
+            console.error("Lỗi khi xóa lớp:", error);
+            toaster.create({
+                title: "Lỗi hệ thống",
+                description: error.message || "Đã xảy ra lỗi khi kết nối tới máy chủ.",
+                type: "error"
+            });
+        }
+    };
+
     const getImageUrl = (url) => {
         if (!url) return "";
         if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("blob:")) {
@@ -146,6 +184,13 @@ export default function ManageKingdoms() {
         const query = searchKeyword.toLowerCase();
         const normalName = (p.normal_name || "").toLowerCase();
         const scienceName = (p.science_name || "").toLowerCase();
+        return normalName.includes(query) || scienceName.includes(query);
+    });
+
+    const filteredClasses = classes.filter(c => {
+        const query = searchKeyword.toLowerCase();
+        const normalName = (c.normal_name || "").toLowerCase();
+        const scienceName = (c.science_name || "").toLowerCase();
         return normalName.includes(query) || scienceName.includes(query);
     });
 
@@ -176,6 +221,15 @@ export default function ManageKingdoms() {
                     onClick={() => setActiveTab("phylum")}
                 >
                     Ngành
+                </Button>
+                <Button
+                    variant={activeTab === "class" ? "solid" : "ghost"}
+                    bg={activeTab === "class" ? "#2a69ac" : "transparent"}
+                    color={activeTab === "class" ? "white" : (isDark ? "gray.400" : "gray.600")}
+                    _hover={{ bg: activeTab === "class" ? "#2c5282" : (isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.02)") }}
+                    onClick={() => setActiveTab("class")}
+                >
+                    Lớp
                 </Button>
             </HStack>
 
@@ -322,7 +376,7 @@ export default function ManageKingdoms() {
                         })}
                     </Grid>
                 )
-            ) : (
+            ) : activeTab === "phylum" ? (
                 filteredPhylums.length === 0 ? (
                     <Box
                         bg={isDark ? "#111a3a" : "white"}
@@ -451,6 +505,149 @@ export default function ManageKingdoms() {
                                                 variant="ghost"
                                                 colorScheme="red"
                                                 onClick={() => handleDeletePhylum(phylumId, phylum.normal_name)}
+                                                display="flex"
+                                                alignItems="center"
+                                                gap={1.5}
+                                            >
+                                                <LuTrash2 size={16} />
+                                                Xóa
+                                            </Button>
+                                        </HStack>
+                                    </Box>
+                                </Box>
+                            );
+                        })}
+                    </Grid>
+                )
+            ) : (
+                filteredClasses.length === 0 ? (
+                    <Box
+                        bg={isDark ? "#111a3a" : "white"}
+                        p={8}
+                        borderRadius="xl"
+                        textAlign="center"
+                        border="1px solid"
+                        borderColor={isDark ? "#1d2a5e" : "#e2e8f0"}
+                    >
+                        <Text color="gray.400" fontSize="lg">
+                            {searchKeyword ? "Không tìm thấy lớp phù hợp với từ khóa." : "Chưa có lớp nào được tạo."}
+                        </Text>
+                    </Box>
+                ) : (
+                    <Grid templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)", xl: "repeat(4, 1fr)" }} gap={6}>
+                        {filteredClasses.map((cls) => {
+                            const classId = cls._id || cls.id;
+                            const cellLabel = TAXONOMY_OPTIONS.cell.find(o => o.value === cls.cell_type)?.label || "Chưa chọn";
+                            const nutritionLabel = TAXONOMY_OPTIONS.nutrition.find(o => o.value === cls.nutrition_mode)?.label || "Chưa chọn";
+                            const reproductionLabel = TAXONOMY_OPTIONS.reproduction.find(o => o.value === cls.reproduction_type)?.label || "Chưa chọn";
+                            const belongToPhylum = phylums.find(p => (p._id || p.id) === cls.phylum_id)?.normal_name || "Không rõ";
+
+                            return (
+                                <Box
+                                    key={classId}
+                                    bg={isDark ? "#111a3a" : "white"}
+                                    borderRadius="xl"
+                                    overflow="hidden"
+                                    boxShadow="sm"
+                                    border="1px solid"
+                                    borderColor={isDark ? "#1d2a5e" : "#e2e8f0"}
+                                    transition="all 0.2s"
+                                    _hover={{ transform: "translateY(-4px)", boxShadow: "md" }}
+                                    display="flex"
+                                    flexDirection="column"
+                                    position="relative"
+                                >
+                                    <Box
+                                        h="110px"
+                                        w="100%"
+                                        bg={cls.theme_color || "#1f2852"}
+                                        position="relative"
+                                        overflow="hidden"
+                                    >
+                                        {cls.background_url && (
+                                            <Image
+                                                src={getImageUrl(cls.background_url)}
+                                                alt=""
+                                                w="100%"
+                                                h="100%"
+                                                objectFit="cover"
+                                                opacity="0.8"
+                                            />
+                                        )}
+                                    </Box>
+
+                                    <Box
+                                        position="absolute"
+                                        top="75px"
+                                        right="16px"
+                                        w="60px"
+                                        h="60px"
+                                        borderRadius="md"
+                                        overflow="hidden"
+                                        bg="white"
+                                        border="3px solid"
+                                        borderColor={isDark ? "#111a3a" : "white"}
+                                        boxShadow="sm"
+                                    >
+                                        {cls.thumbnail_url ? (
+                                            <Image
+                                                src={getImageUrl(cls.thumbnail_url)}
+                                                alt=""
+                                                w="100%"
+                                                h="100%"
+                                                objectFit="cover"
+                                            />
+                                        ) : (
+                                            <Stack justify="center" h="100%" align="center" color="gray.300">
+                                                <LuUpload size={20} />
+                                            </Stack>
+                                        )}
+                                    </Box>
+
+                                    <Box p={4} flex="1" display="flex" flexDirection="column">
+                                        <Text color="#C8AA6E" fontSize="xs" fontStyle="italic" fontWeight="600">
+                                            {cls.science_name || "Science Name"}
+                                        </Text>
+                                        <Heading fontSize="lg" mt={0.5} mb={1} color={isDark ? "white" : "#0f172a"} noOfLines={1}>
+                                            {cls.normal_name || "Lớp mới"}
+                                        </Heading>
+                                        <Text fontSize="xs" color="gray.500" mb={3}>
+                                            Thuộc ngành: <strong>{belongToPhylum}</strong>
+                                        </Text>
+
+                                        <Stack spacing={2} mb={4} fontSize="xs" flex="1">
+                                            <HStack justify="space-between">
+                                                <Text color="gray.400">Loại tế bào:</Text>
+                                                <Badge colorScheme="blue" variant="outline">{cellLabel}</Badge>
+                                            </HStack>
+                                            <HStack justify="space-between">
+                                                <Text color="gray.400">Dinh dưỡng:</Text>
+                                                <Badge colorScheme="green" variant="outline">{nutritionLabel}</Badge>
+                                            </HStack>
+                                            <HStack justify="space-between">
+                                                <Text color="gray.400">Sinh sản:</Text>
+                                                <Badge colorScheme="purple" variant="outline">{reproductionLabel}</Badge>
+                                            </HStack>
+                                        </Stack>
+
+                                        <HStack justify="space-between" pt={3} borderTop="1px solid" borderColor={isDark ? "rgba(255,255,255,0.06)" : "#eef2f7"}>
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                colorScheme="blue"
+                                                onClick={() => navigate(`/classes/addClass?id=${classId}`)}
+                                                display="flex"
+                                                alignItems="center"
+                                                gap={1.5}
+                                            >
+                                                <LuPencil size={16} />
+                                                Chỉnh sửa
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                colorScheme="red"
+                                                onClick={() => handleDeleteClass(classId, cls.normal_name)}
                                                 display="flex"
                                                 alignItems="center"
                                                 gap={1.5}

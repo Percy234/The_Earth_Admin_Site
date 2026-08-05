@@ -26,7 +26,7 @@ import BlockKingdom from "../../components/form/BlockKingdom";
 import { Toaster, toaster } from "../../components/ui/Toaster"
 import KINGDOM_API from "../../services/kingdom.api";
 import PHYLUM_API from "../../services/phylum.api";
-import ReviewKingdom from "../../components/review/reviewKingdom";
+import Review from "../../components/review/Review";
 
 export default function AddPhylum() {
     const [searchParams] = useSearchParams();
@@ -204,7 +204,7 @@ export default function AddPhylum() {
             if (res.status === "success") {
                 if (isEdit) {
                     setTimeout(() => {
-                        navigate("/phylums/manage");
+                        navigate("/kingdoms/manage");
                     }, 1500);
                 } else {
                     setFormData({
@@ -799,7 +799,7 @@ export default function AddPhylum() {
 
                 {/* Review Panel */}
                 <GridItem colSpan={{ base: 12, lg: 4 }}>
-                    <ReviewKingdom
+                    <Review
                         formData={formData}
                         templateImgUrl={templateImgUrl}
                         templateBgUrl={templateBgUrl}

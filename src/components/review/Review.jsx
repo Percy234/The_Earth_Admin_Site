@@ -1,5 +1,5 @@
-import React from "react"
-import { Box, Stack, Icon, Text, Grid, GridItem, Image } from "@chakra-ui/react"
+import React from "react";
+import { Box, Stack, Icon, Text, Grid, GridItem, Image } from "@chakra-ui/react";
 import { LuUpload } from "react-icons/lu";
 import { TAXONOMY_OPTIONS } from "../../config/data.config";
 
@@ -17,11 +17,12 @@ function getContrastColor(hex) {
     return brightness > 155 ? "#0F0F0F" : "#FFFFFF";
 }
 
-export default function ReviewKingdom({
-    formData,
+export default function Review({
+    formData: initialFormData,
     templateImgUrl,
     templateBgUrl
 }) {
+    const formData = initialFormData || {};
     const textColor = getContrastColor(formData.theme_color);
     return (
         <Box
@@ -153,7 +154,7 @@ export default function ReviewKingdom({
                         </Box>
                     </GridItem>
 
-                    {/* Nutrition */}
+                    {/* Nutrition Mode */}
                     <GridItem
                         display="flex"
                         alignItems="flex-start"
@@ -183,7 +184,7 @@ export default function ReviewKingdom({
                         </Box>
                     </GridItem>
 
-                    {/* Reproduction */}
+                    {/* Reproduction Type */}
                     <GridItem
                         display="flex"
                         alignItems="flex-start"
@@ -213,7 +214,7 @@ export default function ReviewKingdom({
                         </Box>
                     </GridItem>
 
-                    {/* Earth */}
+                    {/* Earth Icon */}
                     <GridItem
                         display="flex"
                         justifyContent="center"
@@ -228,7 +229,7 @@ export default function ReviewKingdom({
                 </Grid>
             </Box>
             <Stack gap={0}>
-                {formData.description.map((block, index) => {
+                {(formData.description || []).map((block, index) => {
                     switch (block.block_type) {
                         case "standard": {
                             const blockTextColor = getContrastColor(
@@ -335,8 +336,7 @@ export default function ReviewKingdom({
                                                         >
                                                             Chưa tải lên ảnh
                                                         </Box>
-                                                    )
-                                                    }
+                                                    )}
                                                 </Box>
                                             </GridItem>
                                             <GridItem
@@ -431,19 +431,15 @@ export default function ReviewKingdom({
                                                         >
                                                             Chưa tải lên ảnh
                                                         </Box>
-                                                    )
-                                                    }
+                                                    )}
                                                 </Box>
                                             </GridItem>
                                         </Grid>
                                     </Box>
                                 </Box>
-                            )
+                            );
                         }
                         case "image_top": {
-                            const blockTextColor = getContrastColor(
-                                block.bg_color || "#FFFFFF"
-                            );
                             return (
                                 <Box
                                     key={index}
@@ -501,8 +497,7 @@ export default function ReviewKingdom({
                                                         >
                                                             Chưa tải lên ảnh
                                                         </Box>
-                                                    )
-                                                    }
+                                                    )}
                                                 </Box>
                                             </GridItem>
                                             <GridItem>
@@ -518,7 +513,7 @@ export default function ReviewKingdom({
                                         </Grid>
                                     </Box>
                                 </Box>
-                            )
+                            );
                         }
                         default:
                             return null;
@@ -526,5 +521,5 @@ export default function ReviewKingdom({
                 })}
             </Stack>
         </Box>
-    )
+    );
 }
