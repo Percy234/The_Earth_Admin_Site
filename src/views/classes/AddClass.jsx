@@ -398,7 +398,7 @@ export default function AddClass() {
                                 <GridItem>
                                     <Text mb={1}>Tên thường gọi</Text>
                                     <Input
-                                        placeholder="VD: Lớp Côn trùng"
+                                        placeholder="Tên Lớp"
                                         value={formData.normal_name}
                                         onChange={(e) => setFormData({ ...formData, normal_name: e.target.value })}
                                         bg={isDark ? "#1f2852" : "#ffffff"}
@@ -408,7 +408,7 @@ export default function AddClass() {
                                 <GridItem>
                                     <Text mb={1}>Tên khoa học</Text>
                                     <Input
-                                        placeholder="VD: Insecta"
+                                        placeholder="Tên chuyên môn"
                                         value={formData.science_name}
                                         onChange={(e) => setFormData({ ...formData, science_name: e.target.value })}
                                         bg={isDark ? "#1f2852" : "#ffffff"}

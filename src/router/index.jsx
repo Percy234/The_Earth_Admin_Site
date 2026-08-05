@@ -7,6 +7,7 @@ import AddKingdom from "../views/kingdoms/AddKingdom";
 import ManageKingdoms from "../views/kingdoms/ManageKingdoms";
 import AddPhylum from "../views/phylums/AddPhylum";
 import AddClass from "../views/classes/AddClass";
+import AddOrder from "../views/orders/AddOrder";
 import NotFound from "../views/NotFound";
 
 const router = createBrowserRouter([
@@ -65,6 +66,22 @@ const router = createBrowserRouter([
             },
             {
                 path: "/classes/manage",
+                element: <ManageKingdoms />
+            },
+            {
+                path: "/orders/addOrder",
+                element: <AddOrder />
+            },
+            {
+                path: "/orders/addorder",
+                element: <AddOrder />
+            },
+            {
+                path: "/orders/add",
+                element: <AddOrder />
+            },
+            {
+                path: "/orders/manage",
                 element: <ManageKingdoms />
             },
             {

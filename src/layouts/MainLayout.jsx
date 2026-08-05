@@ -15,6 +15,7 @@ export default function MainLayout() {
         { name: 'Thêm giới mới', path: '/kingdoms/addKingdom' },
         { name: 'Thêm ngành mới', path: '/phylums/addPhylum' },
         { name: 'Thêm lớp mới', path: '/classes/addClass' },
+        { name: 'Thêm bộ mới', path: '/orders/addOrder' },
     ];
 
     const location = useLocation();

@@ -191,7 +191,7 @@ export default function AddPhylum() {
 
             console.log("Sending Phylum data:", payload);
 
-            const res = isEdit 
+            const res = isEdit
                 ? await PHYLUM_API.updatePhylum(id, payload)
                 : await PHYLUM_API.createPhylum(payload);
 
@@ -405,7 +405,7 @@ export default function AddPhylum() {
                                 <GridItem>
                                     <Text mb={1}>Tên thường gọi</Text>
                                     <Input
-                                        placeholder="VD: Ngành Thân mềm"
+                                        placeholder="Tên Ngành"
                                         value={formData.normal_name}
                                         onChange={(e) => setFormData({ ...formData, normal_name: e.target.value })}
                                         bg={isDark ? "#1f2852" : "#ffffff"}
@@ -415,7 +415,7 @@ export default function AddPhylum() {
                                 <GridItem>
                                     <Text mb={1}>Tên khoa học</Text>
                                     <Input
-                                        placeholder="VD: Mollusca"
+                                        placeholder="Tên chuyên môn"
                                         value={formData.science_name}
                                         onChange={(e) => setFormData({ ...formData, science_name: e.target.value })}
                                         bg={isDark ? "#1f2852" : "#ffffff"}

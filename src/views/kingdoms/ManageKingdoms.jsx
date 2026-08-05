@@ -2,27 +2,20 @@ import { useState, useEffect } from "react";
 import {
     Box,
     Grid,
-    GridItem,
     Heading,
     Text,
-    Input,
     Button,
-    Image,
-    Stack,
     HStack,
-    Icon,
-    Badge,
 } from "@chakra-ui/react";
 import { useTheme } from "next-themes";
-import { LuSearch, LuTrash2, LuEye, LuUpload, LuPencil } from "react-icons/lu";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 import KINGDOM_API from "../../services/kingdom.api";
 import PHYLUM_API from "../../services/phylum.api";
 import CLASS_API from "../../services/class.api";
-import APP_CONFIG from "../../config/app.config";
-import { TAXONOMY_OPTIONS } from "../../config/data.config";
-import { Toaster, toaster } from "../../components/ui/Toaster";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import ORDER_API from "../../services/order.api";
+import { toaster } from "../../components/ui/Toaster";
+import TaxonomyCard from "../../components/taxonomy/TaxonomyCard";
 
 export default function ManageKingdoms() {
     const navigate = useNavigate();
@@ -33,37 +26,34 @@ export default function ManageKingdoms() {
     const [kingdoms, setKingdoms] = useState([]);
     const [phylums, setPhylums] = useState([]);
     const [classes, setClasses] = useState([]);
+    const [orders, setOrders] = useState([]);
     const [searchParams] = useSearchParams();
     const searchKeyword = searchParams.get("search") || "";
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        document.title = "Admin | Danh Sách";
+        document.title = "Admin | Danh Sách Phân Loài";
         fetchData();
     }, []);
 
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            // Lấy giới
-            const resKingdoms = await KINGDOM_API.getAll();
-            const listKingdoms = resKingdoms.data || resKingdoms;
-            setKingdoms(listKingdoms);
-
-            // Lấy ngành
-            const resPhylums = await PHYLUM_API.getAll();
-            const listPhylums = resPhylums.data || resPhylums;
-            setPhylums(listPhylums);
-
-            // Lấy lớp
-            const resClasses = await CLASS_API.getAll();
-            const listClasses = resClasses.data || resClasses;
-            setClasses(listClasses);
+            const [resK, resP, resC, resO] = await Promise.all([
+                KINGDOM_API.getAll(),
+                PHYLUM_API.getAll(),
+                CLASS_API.getAll(),
+                ORDER_API.getAll()
+            ]);
+            setKingdoms(resK.data || resK);
+            setPhylums(resP.data || resP);
+            setClasses(resC.data || resC);
+            setOrders(resO.data || resO);
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu phân loài:", error);
             toaster.create({
                 title: "Lỗi tải dữ liệu",
-                description: "Không thể tải danh sách phân loài.",
+                description: "Không thể kết nối đến máy chủ.",
                 type: "error"
             });
         } finally {
@@ -71,29 +61,42 @@ export default function ManageKingdoms() {
         }
     };
 
-    const handleDeleteKingdom = async (id, name) => {
-        if (!window.confirm(`Bạn có chắc chắn muốn xóa giới "${name}" không? Hành động này không thể hoàn tác.`)) {
+    const handleDelete = async (type, id, name) => {
+        if (!window.confirm(`Bạn có chắc chắn muốn xóa "${name}" không? Hành động này không thể hoàn tác.`)) {
             return;
         }
 
         try {
-            const res = await KINGDOM_API.deleteKingdom(id);
-            if (res && res.status === "success") {
+            let res;
+            if (type === "kingdom") {
+                res = await KINGDOM_API.deleteKingdom(id);
+                if (res?.status === "success") setKingdoms(prev => prev.filter(item => (item._id || item.id) !== id));
+            } else if (type === "phylum") {
+                res = await PHYLUM_API.deletePhylum(id);
+                if (res?.status === "success") setPhylums(prev => prev.filter(item => (item._id || item.id) !== id));
+            } else if (type === "class") {
+                res = await CLASS_API.deleteClass(id);
+                if (res?.status === "success") setClasses(prev => prev.filter(item => (item._id || item.id) !== id));
+            } else if (type === "order") {
+                res = await ORDER_API.deleteOrder(id);
+                if (res?.status === "success") setOrders(prev => prev.filter(item => (item._id || item.id) !== id));
+            }
+
+            if (res?.status === "success") {
                 toaster.create({
                     title: "Xóa thành công",
-                    description: res.message || `Đã xóa giới "${name}" thành công.`,
+                    description: res.message || `Đã xóa "${name}" thành công.`,
                     type: "success"
                 });
-                setKingdoms(prev => prev.filter(k => k._id !== id && k.id !== id));
             } else {
                 toaster.create({
-                    title: "Lỗi xóa giới",
-                    description: res?.message || "Không thể xóa giới này.",
+                    title: "Lỗi xóa dữ liệu",
+                    description: res?.message || "Không thể xóa đối tượng này.",
                     type: "error"
                 });
             }
         } catch (error) {
-            console.error("Lỗi khi xóa giới:", error);
+            console.error("Lỗi khi xóa:", error);
             toaster.create({
                 title: "Lỗi hệ thống",
                 description: error.message || "Đã xảy ra lỗi khi kết nối tới máy chủ.",
@@ -102,97 +105,67 @@ export default function ManageKingdoms() {
         }
     };
 
-    const handleDeletePhylum = async (id, name) => {
-        if (!window.confirm(`Bạn có chắc chắn muốn xóa ngành "${name}" không? Hành động này không thể hoàn tác.`)) {
-            return;
-        }
+    const filterItems = (list) => {
+        const query = searchKeyword.toLowerCase();
+        return list.filter(item => {
+            const normalName = (item.normal_name || "").toLowerCase();
+            const scienceName = (item.science_name || "").toLowerCase();
+            return normalName.includes(query) || scienceName.includes(query);
+        });
+    };
 
-        try {
-            const res = await PHYLUM_API.deletePhylum(id);
-            if (res && res.status === "success") {
-                toaster.create({
-                    title: "Xóa thành công",
-                    description: res.message || `Đã xóa ngành "${name}" thành công.`,
-                    type: "success"
-                });
-                setPhylums(prev => prev.filter(p => p._id !== id && p.id !== id));
-            } else {
-                toaster.create({
-                    title: "Lỗi xóa ngành",
-                    description: res?.message || "Không thể xóa ngành này.",
-                    type: "error"
-                });
-            }
-        } catch (error) {
-            console.error("Lỗi khi xóa ngành:", error);
-            toaster.create({
-                title: "Lỗi hệ thống",
-                description: error.message || "Đã xảy ra lỗi khi kết nối tới máy chủ.",
-                type: "error"
-            });
+    const tabs = [
+        { key: "kingdom", label: "Giới" },
+        { key: "phylum", label: "Ngành" },
+        { key: "class", label: "Lớp" },
+        { key: "order", label: "Bộ" },
+    ];
+
+    const getActiveData = () => {
+        switch (activeTab) {
+            case "kingdom":
+                return {
+                    list: filterItems(kingdoms),
+                    emptyText: "giới",
+                    getParentText: () => null,
+                    editRoute: (id) => `/kingdoms/addKingdom?id=${id}`
+                };
+            case "phylum":
+                return {
+                    list: filterItems(phylums),
+                    emptyText: "ngành",
+                    getParentText: (p) => {
+                        const kName = kingdoms.find(k => (k._id || k.id) === p.kingdom_id)?.normal_name || "Không rõ";
+                        return <>Thuộc giới: <strong>{kName}</strong></>;
+                    },
+                    editRoute: (id) => `/phylums/addPhylum?id=${id}`
+                };
+            case "class":
+                return {
+                    list: filterItems(classes),
+                    emptyText: "lớp",
+                    getParentText: (c) => {
+                        const pName = phylums.find(p => (p._id || p.id) === c.phylum_id)?.normal_name || "Không rõ";
+                        return <>Thuộc ngành: <strong>{pName}</strong></>;
+                    },
+                    editRoute: (id) => `/classes/addClass?id=${id}`
+                };
+            case "order":
+                return {
+                    list: filterItems(orders),
+                    emptyText: "bộ",
+                    getParentText: (o) => {
+                        const cName = classes.find(c => (c._id || c.id) === o.class_id)?.normal_name || "Không rõ";
+                        return <>Thuộc lớp: <strong>{cName}</strong></>;
+                    },
+                    editRoute: (id) => `/orders/addOrder?id=${id}`
+                };
+            default:
+                return { list: [], emptyText: "dữ liệu", getParentText: () => null, editRoute: () => "" };
         }
     };
 
-    const handleDeleteClass = async (id, name) => {
-        if (!window.confirm(`Bạn có chắc chắn muốn xóa lớp "${name}" không? Hành động này không thể hoàn tác.`)) {
-            return;
-        }
-
-        try {
-            const res = await CLASS_API.deleteClass(id);
-            if (res && res.status === "success") {
-                toaster.create({
-                    title: "Xóa thành công",
-                    description: res.message || `Đã xóa lớp "${name}" thành công.`,
-                    type: "success"
-                });
-                setClasses(prev => prev.filter(c => c._id !== id && c.id !== id));
-            } else {
-                toaster.create({
-                    title: "Lỗi xóa lớp",
-                    description: res?.message || "Không thể xóa lớp này.",
-                    type: "error"
-                });
-            }
-        } catch (error) {
-            console.error("Lỗi khi xóa lớp:", error);
-            toaster.create({
-                title: "Lỗi hệ thống",
-                description: error.message || "Đã xảy ra lỗi khi kết nối tới máy chủ.",
-                type: "error"
-            });
-        }
-    };
-
-    const getImageUrl = (url) => {
-        if (!url) return "";
-        if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("blob:")) {
-            return url;
-        }
-        return `${APP_CONFIG.BASE_API}/${url}`;
-    };
-
-    // Lọc theo từ khóa tìm kiếm
-    const filteredKingdoms = kingdoms.filter(k => {
-        const query = searchKeyword.toLowerCase();
-        const normalName = (k.normal_name || "").toLowerCase();
-        const scienceName = (k.science_name || "").toLowerCase();
-        return normalName.includes(query) || scienceName.includes(query);
-    });
-
-    const filteredPhylums = phylums.filter(p => {
-        const query = searchKeyword.toLowerCase();
-        const normalName = (p.normal_name || "").toLowerCase();
-        const scienceName = (p.science_name || "").toLowerCase();
-        return normalName.includes(query) || scienceName.includes(query);
-    });
-
-    const filteredClasses = classes.filter(c => {
-        const query = searchKeyword.toLowerCase();
-        const normalName = (c.normal_name || "").toLowerCase();
-        const scienceName = (c.science_name || "").toLowerCase();
-        return normalName.includes(query) || scienceName.includes(query);
-    });
+    const activeConfig = getActiveData();
 
     return (
         <Box>
@@ -204,464 +177,53 @@ export default function ManageKingdoms() {
 
             {/* Custom Tab Selector */}
             <HStack gap={4} mb={6} borderBottom="1px solid" borderColor={isDark ? "rgba(255,255,255,0.06)" : "#eef2f7"} pb={3}>
-                <Button
-                    variant={activeTab === "kingdom" ? "solid" : "ghost"}
-                    bg={activeTab === "kingdom" ? "#2a69ac" : "transparent"}
-                    color={activeTab === "kingdom" ? "white" : (isDark ? "gray.400" : "gray.600")}
-                    _hover={{ bg: activeTab === "kingdom" ? "#2c5282" : (isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.02)") }}
-                    onClick={() => setActiveTab("kingdom")}
-                >
-                    Giới
-                </Button>
-                <Button
-                    variant={activeTab === "phylum" ? "solid" : "ghost"}
-                    bg={activeTab === "phylum" ? "#2a69ac" : "transparent"}
-                    color={activeTab === "phylum" ? "white" : (isDark ? "gray.400" : "gray.600")}
-                    _hover={{ bg: activeTab === "phylum" ? "#2c5282" : (isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.02)") }}
-                    onClick={() => setActiveTab("phylum")}
-                >
-                    Ngành
-                </Button>
-                <Button
-                    variant={activeTab === "class" ? "solid" : "ghost"}
-                    bg={activeTab === "class" ? "#2a69ac" : "transparent"}
-                    color={activeTab === "class" ? "white" : (isDark ? "gray.400" : "gray.600")}
-                    _hover={{ bg: activeTab === "class" ? "#2c5282" : (isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.02)") }}
-                    onClick={() => setActiveTab("class")}
-                >
-                    Lớp
-                </Button>
+                {tabs.map((tab) => (
+                    <Button
+                        key={tab.key}
+                        variant={activeTab === tab.key ? "solid" : "ghost"}
+                        bg={activeTab === tab.key ? "#2a69ac" : "transparent"}
+                        color={activeTab === tab.key ? "white" : (isDark ? "gray.400" : "gray.600")}
+                        _hover={{ bg: activeTab === tab.key ? "#2c5282" : (isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.02)") }}
+                        onClick={() => setActiveTab(tab.key)}
+                    >
+                        {tab.label}
+                    </Button>
+                ))}
             </HStack>
 
             {isLoading ? (
                 <Box textAlign="center" py={12}>
                     <Text color="gray.400">Đang tải danh sách...</Text>
                 </Box>
-            ) : activeTab === "kingdom" ? (
-                filteredKingdoms.length === 0 ? (
-                    <Box
-                        bg={isDark ? "#111a3a" : "white"}
-                        p={8}
-                        borderRadius="xl"
-                        textAlign="center"
-                        border="1px solid"
-                        borderColor={isDark ? "#1d2a5e" : "#e2e8f0"}
-                    >
-                        <Text color="gray.400" fontSize="lg">
-                            {searchKeyword ? "Không tìm thấy giới phù hợp với từ khóa." : "Chưa có giới nào được tạo."}
-                        </Text>
-                    </Box>
-                ) : (
-                    <Grid templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)", xl: "repeat(4, 1fr)" }} gap={6}>
-                        {filteredKingdoms.map((kingdom) => {
-                            const kingdomId = kingdom._id || kingdom.id;
-                            const cellLabel = TAXONOMY_OPTIONS.cell.find(o => o.value === kingdom.cell_type)?.label || "Chưa chọn";
-                            const nutritionLabel = TAXONOMY_OPTIONS.nutrition.find(o => o.value === kingdom.nutrition_mode)?.label || "Chưa chọn";
-                            const reproductionLabel = TAXONOMY_OPTIONS.reproduction.find(o => o.value === kingdom.reproduction_type)?.label || "Chưa chọn";
-
-                            return (
-                                <Box
-                                    key={kingdomId}
-                                    bg={isDark ? "#111a3a" : "white"}
-                                    borderRadius="xl"
-                                    overflow="hidden"
-                                    boxShadow="sm"
-                                    border="1px solid"
-                                    borderColor={isDark ? "#1d2a5e" : "#e2e8f0"}
-                                    transition="all 0.2s"
-                                    _hover={{ transform: "translateY(-4px)", boxShadow: "md" }}
-                                    display="flex"
-                                    flexDirection="column"
-                                    position="relative"
-                                >
-                                    <Box
-                                        h="110px"
-                                        w="100%"
-                                        bg={kingdom.theme_color || "#1f2852"}
-                                        position="relative"
-                                        overflow="hidden"
-                                    >
-                                        {kingdom.background_url && (
-                                            <Image
-                                                src={getImageUrl(kingdom.background_url)}
-                                                alt=""
-                                                w="100%"
-                                                h="100%"
-                                                objectFit="cover"
-                                                opacity="0.8"
-                                            />
-                                        )}
-                                    </Box>
-
-                                    <Box
-                                        position="absolute"
-                                        top="75px"
-                                        right="16px"
-                                        w="60px"
-                                        h="60px"
-                                        borderRadius="md"
-                                        overflow="hidden"
-                                        bg="white"
-                                        border="3px solid"
-                                        borderColor={isDark ? "#111a3a" : "white"}
-                                        boxShadow="sm"
-                                    >
-                                        {kingdom.thumbnail_url ? (
-                                            <Image
-                                                src={getImageUrl(kingdom.thumbnail_url)}
-                                                alt=""
-                                                w="100%"
-                                                h="100%"
-                                                objectFit="cover"
-                                            />
-                                        ) : (
-                                            <Stack justify="center" h="100%" align="center" color="gray.300">
-                                                <LuUpload size={20} />
-                                            </Stack>
-                                        )}
-                                    </Box>
-
-                                    <Box p={4} flex="1" display="flex" flexDirection="column">
-                                        <Text color="#C8AA6E" fontSize="xs" fontStyle="italic" fontWeight="600">
-                                            {kingdom.science_name || "Science Name"}
-                                        </Text>
-                                        <Heading fontSize="lg" mt={0.5} mb={3} color={isDark ? "white" : "#0f172a"} noOfLines={1}>
-                                            {kingdom.normal_name || "Giới mới"}
-                                        </Heading>
-
-                                        <Stack spacing={2} mb={4} fontSize="xs" flex="1">
-                                            <HStack justify="space-between">
-                                                <Text color="gray.400">Loại tế bào:</Text>
-                                                <Badge colorScheme="blue" variant="outline">{cellLabel}</Badge>
-                                            </HStack>
-                                            <HStack justify="space-between">
-                                                <Text color="gray.400">Dinh dưỡng:</Text>
-                                                <Badge colorScheme="green" variant="outline">{nutritionLabel}</Badge>
-                                            </HStack>
-                                            <HStack justify="space-between">
-                                                <Text color="gray.400">Sinh sản:</Text>
-                                                <Badge colorScheme="purple" variant="outline">{reproductionLabel}</Badge>
-                                            </HStack>
-                                        </Stack>
-
-                                        <HStack justify="space-between" pt={3} borderTop="1px solid" borderColor={isDark ? "rgba(255,255,255,0.06)" : "#eef2f7"}>
-                                            <Button
-                                                size="sm"
-                                                variant="ghost"
-                                                colorScheme="blue"
-                                                onClick={() => navigate(`/kingdoms/addKingdom?id=${kingdomId}`)}
-                                                display="flex"
-                                                alignItems="center"
-                                                gap={1.5}
-                                            >
-                                                <LuPencil size={16} />
-                                                Chỉnh sửa
-                                            </Button>
-                                            <Button
-                                                size="sm"
-                                                variant="ghost"
-                                                colorScheme="red"
-                                                onClick={() => handleDeleteKingdom(kingdomId, kingdom.normal_name)}
-                                                display="flex"
-                                                alignItems="center"
-                                                gap={1.5}
-                                            >
-                                                <LuTrash2 size={16} />
-                                                Xóa
-                                            </Button>
-                                        </HStack>
-                                    </Box>
-                                </Box>
-                            );
-                        })}
-                    </Grid>
-                )
-            ) : activeTab === "phylum" ? (
-                filteredPhylums.length === 0 ? (
-                    <Box
-                        bg={isDark ? "#111a3a" : "white"}
-                        p={8}
-                        borderRadius="xl"
-                        textAlign="center"
-                        border="1px solid"
-                        borderColor={isDark ? "#1d2a5e" : "#e2e8f0"}
-                    >
-                        <Text color="gray.400" fontSize="lg">
-                            {searchKeyword ? "Không tìm thấy ngành phù hợp với từ khóa." : "Chưa có ngành nào được tạo."}
-                        </Text>
-                    </Box>
-                ) : (
-                    <Grid templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)", xl: "repeat(4, 1fr)" }} gap={6}>
-                        {filteredPhylums.map((phylum) => {
-                            const phylumId = phylum._id || phylum.id;
-                            const cellLabel = TAXONOMY_OPTIONS.cell.find(o => o.value === phylum.cell_type)?.label || "Chưa chọn";
-                            const nutritionLabel = TAXONOMY_OPTIONS.nutrition.find(o => o.value === phylum.nutrition_mode)?.label || "Chưa chọn";
-                            const reproductionLabel = TAXONOMY_OPTIONS.reproduction.find(o => o.value === phylum.reproduction_type)?.label || "Chưa chọn";
-                            const belongToKingdom = kingdoms.find(k => (k._id || k.id) === phylum.kingdom_id)?.normal_name || "Không rõ";
-
-                            return (
-                                <Box
-                                    key={phylumId}
-                                    bg={isDark ? "#111a3a" : "white"}
-                                    borderRadius="xl"
-                                    overflow="hidden"
-                                    boxShadow="sm"
-                                    border="1px solid"
-                                    borderColor={isDark ? "#1d2a5e" : "#e2e8f0"}
-                                    transition="all 0.2s"
-                                    _hover={{ transform: "translateY(-4px)", boxShadow: "md" }}
-                                    display="flex"
-                                    flexDirection="column"
-                                    position="relative"
-                                >
-                                    <Box
-                                        h="110px"
-                                        w="100%"
-                                        bg={phylum.theme_color || "#1f2852"}
-                                        position="relative"
-                                        overflow="hidden"
-                                    >
-                                        {phylum.background_url && (
-                                            <Image
-                                                src={getImageUrl(phylum.background_url)}
-                                                alt=""
-                                                w="100%"
-                                                h="100%"
-                                                objectFit="cover"
-                                                opacity="0.8"
-                                            />
-                                        )}
-                                    </Box>
-
-                                    <Box
-                                        position="absolute"
-                                        top="75px"
-                                        right="16px"
-                                        w="60px"
-                                        h="60px"
-                                        borderRadius="md"
-                                        overflow="hidden"
-                                        bg="white"
-                                        border="3px solid"
-                                        borderColor={isDark ? "#111a3a" : "white"}
-                                        boxShadow="sm"
-                                    >
-                                        {phylum.thumbnail_url ? (
-                                            <Image
-                                                src={getImageUrl(phylum.thumbnail_url)}
-                                                alt=""
-                                                w="100%"
-                                                h="100%"
-                                                objectFit="cover"
-                                            />
-                                        ) : (
-                                            <Stack justify="center" h="100%" align="center" color="gray.300">
-                                                <LuUpload size={20} />
-                                            </Stack>
-                                        )}
-                                    </Box>
-
-                                    <Box p={4} flex="1" display="flex" flexDirection="column">
-                                        <Text color="#C8AA6E" fontSize="xs" fontStyle="italic" fontWeight="600">
-                                            {phylum.science_name || "Science Name"}
-                                        </Text>
-                                        <Heading fontSize="lg" mt={0.5} mb={1} color={isDark ? "white" : "#0f172a"} noOfLines={1}>
-                                            {phylum.normal_name || "Ngành mới"}
-                                        </Heading>
-                                        <Text fontSize="xs" color="gray.500" mb={3}>
-                                            Thuộc giới: <strong>{belongToKingdom}</strong>
-                                        </Text>
-
-                                        <Stack spacing={2} mb={4} fontSize="xs" flex="1">
-                                            <HStack justify="space-between">
-                                                <Text color="gray.400">Loại tế bào:</Text>
-                                                <Badge colorScheme="blue" variant="outline">{cellLabel}</Badge>
-                                            </HStack>
-                                            <HStack justify="space-between">
-                                                <Text color="gray.400">Dinh dưỡng:</Text>
-                                                <Badge colorScheme="green" variant="outline">{nutritionLabel}</Badge>
-                                            </HStack>
-                                            <HStack justify="space-between">
-                                                <Text color="gray.400">Sinh sản:</Text>
-                                                <Badge colorScheme="purple" variant="outline">{reproductionLabel}</Badge>
-                                            </HStack>
-                                        </Stack>
-
-                                        <HStack justify="space-between" pt={3} borderTop="1px solid" borderColor={isDark ? "rgba(255,255,255,0.06)" : "#eef2f7"}>
-                                            <Button
-                                                size="sm"
-                                                variant="ghost"
-                                                colorScheme="blue"
-                                                onClick={() => navigate(`/phylums/addPhylum?id=${phylumId}`)}
-                                                display="flex"
-                                                alignItems="center"
-                                                gap={1.5}
-                                            >
-                                                <LuPencil size={16} />
-                                                Chỉnh sửa
-                                            </Button>
-                                            <Button
-                                                size="sm"
-                                                variant="ghost"
-                                                colorScheme="red"
-                                                onClick={() => handleDeletePhylum(phylumId, phylum.normal_name)}
-                                                display="flex"
-                                                alignItems="center"
-                                                gap={1.5}
-                                            >
-                                                <LuTrash2 size={16} />
-                                                Xóa
-                                            </Button>
-                                        </HStack>
-                                    </Box>
-                                </Box>
-                            );
-                        })}
-                    </Grid>
-                )
+            ) : activeConfig.list.length === 0 ? (
+                <Box
+                    bg={isDark ? "#111a3a" : "white"}
+                    p={8}
+                    borderRadius="xl"
+                    textAlign="center"
+                    border="1px solid"
+                    borderColor={isDark ? "#1d2a5e" : "#e2e8f0"}
+                >
+                    <Text color="gray.400" fontSize="lg">
+                        {searchKeyword ? `Không tìm thấy ${activeConfig.emptyText} phù hợp với từ khóa.` : `Chưa có ${activeConfig.emptyText} nào được tạo.`}
+                    </Text>
+                </Box>
             ) : (
-                filteredClasses.length === 0 ? (
-                    <Box
-                        bg={isDark ? "#111a3a" : "white"}
-                        p={8}
-                        borderRadius="xl"
-                        textAlign="center"
-                        border="1px solid"
-                        borderColor={isDark ? "#1d2a5e" : "#e2e8f0"}
-                    >
-                        <Text color="gray.400" fontSize="lg">
-                            {searchKeyword ? "Không tìm thấy lớp phù hợp với từ khóa." : "Chưa có lớp nào được tạo."}
-                        </Text>
-                    </Box>
-                ) : (
-                    <Grid templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)", xl: "repeat(4, 1fr)" }} gap={6}>
-                        {filteredClasses.map((cls) => {
-                            const classId = cls._id || cls.id;
-                            const cellLabel = TAXONOMY_OPTIONS.cell.find(o => o.value === cls.cell_type)?.label || "Chưa chọn";
-                            const nutritionLabel = TAXONOMY_OPTIONS.nutrition.find(o => o.value === cls.nutrition_mode)?.label || "Chưa chọn";
-                            const reproductionLabel = TAXONOMY_OPTIONS.reproduction.find(o => o.value === cls.reproduction_type)?.label || "Chưa chọn";
-                            const belongToPhylum = phylums.find(p => (p._id || p.id) === cls.phylum_id)?.normal_name || "Không rõ";
-
-                            return (
-                                <Box
-                                    key={classId}
-                                    bg={isDark ? "#111a3a" : "white"}
-                                    borderRadius="xl"
-                                    overflow="hidden"
-                                    boxShadow="sm"
-                                    border="1px solid"
-                                    borderColor={isDark ? "#1d2a5e" : "#e2e8f0"}
-                                    transition="all 0.2s"
-                                    _hover={{ transform: "translateY(-4px)", boxShadow: "md" }}
-                                    display="flex"
-                                    flexDirection="column"
-                                    position="relative"
-                                >
-                                    <Box
-                                        h="110px"
-                                        w="100%"
-                                        bg={cls.theme_color || "#1f2852"}
-                                        position="relative"
-                                        overflow="hidden"
-                                    >
-                                        {cls.background_url && (
-                                            <Image
-                                                src={getImageUrl(cls.background_url)}
-                                                alt=""
-                                                w="100%"
-                                                h="100%"
-                                                objectFit="cover"
-                                                opacity="0.8"
-                                            />
-                                        )}
-                                    </Box>
-
-                                    <Box
-                                        position="absolute"
-                                        top="75px"
-                                        right="16px"
-                                        w="60px"
-                                        h="60px"
-                                        borderRadius="md"
-                                        overflow="hidden"
-                                        bg="white"
-                                        border="3px solid"
-                                        borderColor={isDark ? "#111a3a" : "white"}
-                                        boxShadow="sm"
-                                    >
-                                        {cls.thumbnail_url ? (
-                                            <Image
-                                                src={getImageUrl(cls.thumbnail_url)}
-                                                alt=""
-                                                w="100%"
-                                                h="100%"
-                                                objectFit="cover"
-                                            />
-                                        ) : (
-                                            <Stack justify="center" h="100%" align="center" color="gray.300">
-                                                <LuUpload size={20} />
-                                            </Stack>
-                                        )}
-                                    </Box>
-
-                                    <Box p={4} flex="1" display="flex" flexDirection="column">
-                                        <Text color="#C8AA6E" fontSize="xs" fontStyle="italic" fontWeight="600">
-                                            {cls.science_name || "Science Name"}
-                                        </Text>
-                                        <Heading fontSize="lg" mt={0.5} mb={1} color={isDark ? "white" : "#0f172a"} noOfLines={1}>
-                                            {cls.normal_name || "Lớp mới"}
-                                        </Heading>
-                                        <Text fontSize="xs" color="gray.500" mb={3}>
-                                            Thuộc ngành: <strong>{belongToPhylum}</strong>
-                                        </Text>
-
-                                        <Stack spacing={2} mb={4} fontSize="xs" flex="1">
-                                            <HStack justify="space-between">
-                                                <Text color="gray.400">Loại tế bào:</Text>
-                                                <Badge colorScheme="blue" variant="outline">{cellLabel}</Badge>
-                                            </HStack>
-                                            <HStack justify="space-between">
-                                                <Text color="gray.400">Dinh dưỡng:</Text>
-                                                <Badge colorScheme="green" variant="outline">{nutritionLabel}</Badge>
-                                            </HStack>
-                                            <HStack justify="space-between">
-                                                <Text color="gray.400">Sinh sản:</Text>
-                                                <Badge colorScheme="purple" variant="outline">{reproductionLabel}</Badge>
-                                            </HStack>
-                                        </Stack>
-
-                                        <HStack justify="space-between" pt={3} borderTop="1px solid" borderColor={isDark ? "rgba(255,255,255,0.06)" : "#eef2f7"}>
-                                            <Button
-                                                size="sm"
-                                                variant="ghost"
-                                                colorScheme="blue"
-                                                onClick={() => navigate(`/classes/addClass?id=${classId}`)}
-                                                display="flex"
-                                                alignItems="center"
-                                                gap={1.5}
-                                            >
-                                                <LuPencil size={16} />
-                                                Chỉnh sửa
-                                            </Button>
-                                            <Button
-                                                size="sm"
-                                                variant="ghost"
-                                                colorScheme="red"
-                                                onClick={() => handleDeleteClass(classId, cls.normal_name)}
-                                                display="flex"
-                                                alignItems="center"
-                                                gap={1.5}
-                                            >
-                                                <LuTrash2 size={16} />
-                                                Xóa
-                                            </Button>
-                                        </HStack>
-                                    </Box>
-                                </Box>
-                            );
-                        })}
-                    </Grid>
-                )
+                <Grid templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)", xl: "repeat(4, 1fr)" }} gap={6}>
+                    {activeConfig.list.map((item) => {
+                        const itemId = item._id || item.id;
+                        return (
+                            <TaxonomyCard
+                                key={itemId}
+                                item={item}
+                                parentText={activeConfig.getParentText(item)}
+                                onEdit={() => navigate(activeConfig.editRoute(itemId))}
+                                onDelete={() => handleDelete(activeTab, itemId, item.normal_name)}
+                                isDark={isDark}
+                            />
+                        );
+                    })}
+                </Grid>
             )}
         </Box>
     );

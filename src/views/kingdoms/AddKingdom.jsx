@@ -168,7 +168,7 @@ export default function AddKingdom() {
 
             console.log("Sending data:", payload);
 
-            const res = isEdit 
+            const res = isEdit
                 ? await KINGDOM_API.updateKingdom(id, payload)
                 : await KINGDOM_API.createKingdom(payload);
 
@@ -356,420 +356,420 @@ export default function AddKingdom() {
     }, [templateImgUrl, templateBgUrl]);
     return (
         <Box>
-                <Heading fontSize="40px" my={4}>{isEdit ? "Chỉnh sửa giới" : "Thêm giới mới"}</Heading>
-                <Grid templateColumns="repeat(12, 1fr)" gap={6}>
-                    <GridItem colSpan={{ base: 12, lg: 8 }}>
-                        <Box
-                            w="100%"
-                            p={6}
-                            borderRadius="lg"
-                            bg={isDark ? "#111a3a" : "#ffffff"}
-                        >
-                            <Heading fontWeight="bold" mb={4} fontSize={"2xl"} textAlign="center">Thông tin cơ bản</Heading>
-                            <Stack spacing={6}>
-                                {/* Tên */}
-                                <Grid
-                                    templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-                                    gap={4}
-                                    my={2}
-                                >
-                                    <GridItem>
-                                        <Text mb={1}>Tên thường gọi</Text>
-                                        <Input
-                                            placeholder="VD: Giới Động vật"
-                                            value={formData.normal_name}
-                                            onChange={(e) => setFormData({ ...formData, normal_name: e.target.value })}
-                                            bg={isDark ? "#1f2852" : "#ffffff"}
-                                            borderColor="rgba(148, 163, 184, 0.25)"
-                                        />
-                                    </GridItem>
-                                    <GridItem>
-                                        <Text mb={1}>Tên khoa học</Text>
-                                        <Input
-                                            placeholder="VD: Animalia"
-                                            value={formData.science_name}
-                                            onChange={(e) => setFormData({ ...formData, science_name: e.target.value })}
-                                            bg={isDark ? "#1f2852" : "#ffffff"}
-                                            borderColor="rgba(148, 163, 184, 0.25)"
-                                        />
-                                    </GridItem>
-                                </Grid>
-                                {/* Ảnh */}
-                                <Grid
-                                    templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-                                    gap={4}
-                                    my={2}
-                                >
-                                    <GridItem>
-                                        <Text mb={1}>Thêm ảnh nền</Text>
-                                        <Box
-                                            as="button"
-                                            type="button"
-                                            w="100%"
-                                            onClick={() => backgroundInputRef.current?.click()}
-                                            p={2}
-                                            borderRadius="md"
-                                            bg={isDark ? "#1f2852" : "#f8fafc"}
-                                            border="1px solid"
-                                            borderColor="rgba(148, 163, 184, 0.25)"
-                                            cursor="pointer"
-                                            transition="all 0.2s"
-                                            _hover={{
-                                                borderColor: "rgba(148, 163, 184, 0.5)",
-                                                bg: isDark ? "#252d4a" : "#eef2f7"
-                                            }}
-                                            textAlign="left"
-                                        >
-                                            <Text fontSize="sm" color={backgroundFileName ? "#e2e8f0" : "#94a3b8"}>
-                                                {backgroundFileName || "Chọn ảnh nền..."}
-                                            </Text>
-                                        </Box>
-                                        <input
-                                            ref={backgroundInputRef}
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => handleImageInputChange(e, "background")}
-                                            style={{ display: "none" }}
-                                        />
-                                    </GridItem>
-                                    <GridItem>
-                                        <Text mb={1}>Thêm ảnh đại diện</Text>
-                                        <Box
-                                            as="button"
-                                            type="button"
-                                            w="100%"
-                                            onClick={() => thumbnailInputRef.current?.click()}
-                                            p={2}
-                                            borderRadius="md"
-                                            bg={isDark ? "#1f2852" : "#f8fafc"}
-                                            border="1px solid"
-                                            borderColor="rgba(148, 163, 184, 0.25)"
-                                            cursor="pointer"
-                                            transition="all 0.2s"
-                                            _hover={{
-                                                borderColor: "rgba(148, 163, 184, 0.5)",
-                                                bg: isDark ? "#252d4a" : "#eef2f7"
-                                            }}
-                                            textAlign="left"
-                                        >
-                                            <Text fontSize="sm" color={thumbnailFileName ? "#e2e8f0" : "#94a3b8"}>
-                                                {thumbnailFileName || "Chọn ảnh đại diện..."}
-                                            </Text>
-                                        </Box>
-                                        <input
-                                            ref={thumbnailInputRef}
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => handleImageInputChange(e, "thumbnail")}
-                                            style={{ display: "none" }}
-                                        />
-                                    </GridItem>
-                                </Grid>
-                                {/* Tiêu chí phân loại */}
-                                <Grid
-                                    templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-                                    gap={4}
-                                    my={2}
-                                >
-                                    <GridItem>
-                                        <Stack spacing={3}>
-                                            <Text mb={1}>Loại tế bào</Text>
-                                            <Stack direction={{ base: "column", sm: "row" }} gap={{ base: 2, sm: 6 }} wrap="wrap">
-                                                {TAXONOMY_OPTIONS.cell.map((option) => (
-                                                    <label
-                                                        key={option.value}
-                                                        className="flex items-center cursor-pointer text-xs md:text-sm lg:text-base gap-1.5 md:gap-2.5"
-                                                        style={{
-                                                            color: isDark ? "white" : "#0f172a",
-                                                        }}
-                                                    >
-                                                        <input
-                                                            type="radio"
-                                                            name="cell_type"
-                                                            value={option.value}
-                                                            checked={formData.cell_type === option.value}
-                                                            onChange={(e) =>
-                                                                setFormData({
-                                                                    ...formData,
-                                                                    cell_type: e.target.value,
-                                                                })
-                                                            }
-                                                            className="w-4 h-4 md:w-5 md:h-5 cursor-pointer transition-all duration-200"
-                                                            style={{
-                                                                appearance: "none",
-                                                                border: "2px solid",
-                                                                borderColor: isDark ? "white" : "#0f172a",
-                                                                borderRadius: "50%",
-                                                                backgroundColor:
-                                                                    formData.cell_type === option.value
-                                                                        ? "#ffffff"
-                                                                        : "transparent",
-                                                                boxShadow:
-                                                                    formData.cell_type === option.value
-                                                                        ? "inset 0 0 0 4px #111a3a"
-                                                                        : "none",
-                                                            }}
-                                                        />
-                                                        {option.label}
-                                                    </label>
-                                                ))}
-                                            </Stack>
-                                        </Stack>
-                                    </GridItem>
-                                    <GridItem>
-                                        <Stack spacing={3}>
-                                            <Text mb={1}>Loại dinh dưỡng</Text>
-                                            <Stack direction={{ base: "column", sm: "row" }} gap={{ base: 2, sm: 6 }} wrap="wrap">
-                                                {TAXONOMY_OPTIONS.nutrition.map((option) => (
-                                                    <label
-                                                        key={option.value}
-                                                        className="flex items-center cursor-pointer text-xs md:text-sm lg:text-base gap-1.5 md:gap-2.5"
-                                                        style={{
-                                                            color: isDark ? "white" : "#0f172a",
-                                                        }}
-                                                    >
-                                                        <input
-                                                            type="radio"
-                                                            name="nutrition_mode"
-                                                            value={option.value}
-                                                            checked={formData.nutrition_mode === option.value}
-                                                            onChange={(e) =>
-                                                                setFormData({
-                                                                    ...formData,
-                                                                    nutrition_mode: e.target.value,
-                                                                })
-                                                            }
-                                                            className="w-4 h-4 md:w-5 md:h-5 cursor-pointer transition-all duration-200"
-                                                            style={{
-                                                                appearance: "none",
-                                                                border: "2px solid",
-                                                                borderColor: isDark ? "white" : "#0f172a",
-                                                                borderRadius: "50%",
-                                                                backgroundColor:
-                                                                    formData.nutrition_mode === option.value
-                                                                        ? "#ffffff"
-                                                                        : "transparent",
-                                                                boxShadow:
-                                                                    formData.nutrition_mode === option.value
-                                                                        ? "inset 0 0 0 4px #111a3a"
-                                                                        : "none",
-                                                            }}
-                                                        />
-                                                        {option.label}
-                                                    </label>
-                                                ))}
-                                            </Stack>
-                                        </Stack>
-                                    </GridItem>
-                                </Grid>
-                                <Grid
-                                    templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-                                    gap={4}
-                                    my={2}
-                                >
-                                    <GridItem>
-                                        <Stack spacing={3}>
-                                            <Text mb={1}>Loại sinh sản</Text>
-                                            <Stack direction={{ base: "column", sm: "row" }} gap={{ base: 2, sm: 6 }} wrap="wrap">
-                                                {TAXONOMY_OPTIONS.reproduction.map((option) => (
-                                                    <label
-                                                        key={option.value}
-                                                        className="flex items-center cursor-pointer text-xs md:text-sm lg:text-base gap-1.5 md:gap-2.5"
-                                                        style={{
-                                                            color: isDark ? "white" : "#0f172a",
-                                                        }}
-                                                    >
-                                                        <input
-                                                            type="radio"
-                                                            name="reproduction_type"
-                                                            value={option.value}
-                                                            checked={formData.reproduction_type === option.value}
-                                                            onChange={(e) =>
-                                                                setFormData({
-                                                                    ...formData,
-                                                                    reproduction_type: e.target.value,
-                                                                })
-                                                            }
-                                                            className="w-4 h-4 md:w-5 md:h-5 cursor-pointer transition-all duration-200"
-                                                            style={{
-                                                                appearance: "none",
-                                                                border: "2px solid",
-                                                                borderColor: isDark ? "white" : "#0f172a",
-                                                                borderRadius: "50%",
-                                                                backgroundColor:
-                                                                    formData.reproduction_type === option.value
-                                                                        ? "#ffffff"
-                                                                        : "transparent",
-                                                                boxShadow:
-                                                                    formData.reproduction_type === option.value
-                                                                        ? "inset 0 0 0 4px #111a3a"
-                                                                        : "none",
-                                                            }}
-                                                        />
-                                                        {option.label}
-                                                    </label>
-                                                ))}
-                                            </Stack>
-                                        </Stack>
-                                    </GridItem>
-                                    <GridItem>
-                                        <Stack spacing={3}>
-                                            <Text mb={1}>Màu chủ đề</Text>
-                                            <Stack direction="row" gap={2} w="100%">
-                                                <Input
-                                                    placeholder="VD: #2a69ac"
-                                                    value={formData.theme_color}
-                                                    onChange={(e) => setFormData({ ...formData, theme_color: e.target.value })}
-                                                    bg={isDark ? "#1f2852" : "#ffffff"}
-                                                    borderColor="rgba(148, 163, 184, 0.25)"
-                                                />
-                                                <Box
-                                                    position="relative"
-                                                    w="40px"
-                                                    h="40px"
-                                                    borderRadius="md"
-                                                    border="1px solid"
-                                                    borderColor="rgba(148, 163, 184, 0.25)"
-                                                    bg={formData.theme_color || "#1f2852"}
-                                                    flexShrink={0}
+            <Heading fontSize="40px" my={4}>{isEdit ? "Chỉnh sửa giới" : "Thêm giới mới"}</Heading>
+            <Grid templateColumns="repeat(12, 1fr)" gap={6}>
+                <GridItem colSpan={{ base: 12, lg: 8 }}>
+                    <Box
+                        w="100%"
+                        p={6}
+                        borderRadius="lg"
+                        bg={isDark ? "#111a3a" : "#ffffff"}
+                    >
+                        <Heading fontWeight="bold" mb={4} fontSize={"2xl"} textAlign="center">Thông tin cơ bản</Heading>
+                        <Stack spacing={6}>
+                            {/* Tên */}
+                            <Grid
+                                templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+                                gap={4}
+                                my={2}
+                            >
+                                <GridItem>
+                                    <Text mb={1}>Tên thường gọi</Text>
+                                    <Input
+                                        placeholder="Tên Giới"
+                                        value={formData.normal_name}
+                                        onChange={(e) => setFormData({ ...formData, normal_name: e.target.value })}
+                                        bg={isDark ? "#1f2852" : "#ffffff"}
+                                        borderColor="rgba(148, 163, 184, 0.25)"
+                                    />
+                                </GridItem>
+                                <GridItem>
+                                    <Text mb={1}>Tên khoa học</Text>
+                                    <Input
+                                        placeholder="Tên chuyên môn"
+                                        value={formData.science_name}
+                                        onChange={(e) => setFormData({ ...formData, science_name: e.target.value })}
+                                        bg={isDark ? "#1f2852" : "#ffffff"}
+                                        borderColor="rgba(148, 163, 184, 0.25)"
+                                    />
+                                </GridItem>
+                            </Grid>
+                            {/* Ảnh */}
+                            <Grid
+                                templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+                                gap={4}
+                                my={2}
+                            >
+                                <GridItem>
+                                    <Text mb={1}>Thêm ảnh nền</Text>
+                                    <Box
+                                        as="button"
+                                        type="button"
+                                        w="100%"
+                                        onClick={() => backgroundInputRef.current?.click()}
+                                        p={2}
+                                        borderRadius="md"
+                                        bg={isDark ? "#1f2852" : "#f8fafc"}
+                                        border="1px solid"
+                                        borderColor="rgba(148, 163, 184, 0.25)"
+                                        cursor="pointer"
+                                        transition="all 0.2s"
+                                        _hover={{
+                                            borderColor: "rgba(148, 163, 184, 0.5)",
+                                            bg: isDark ? "#252d4a" : "#eef2f7"
+                                        }}
+                                        textAlign="left"
+                                    >
+                                        <Text fontSize="sm" color={backgroundFileName ? "#e2e8f0" : "#94a3b8"}>
+                                            {backgroundFileName || "Chọn ảnh nền..."}
+                                        </Text>
+                                    </Box>
+                                    <input
+                                        ref={backgroundInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => handleImageInputChange(e, "background")}
+                                        style={{ display: "none" }}
+                                    />
+                                </GridItem>
+                                <GridItem>
+                                    <Text mb={1}>Thêm ảnh đại diện</Text>
+                                    <Box
+                                        as="button"
+                                        type="button"
+                                        w="100%"
+                                        onClick={() => thumbnailInputRef.current?.click()}
+                                        p={2}
+                                        borderRadius="md"
+                                        bg={isDark ? "#1f2852" : "#f8fafc"}
+                                        border="1px solid"
+                                        borderColor="rgba(148, 163, 184, 0.25)"
+                                        cursor="pointer"
+                                        transition="all 0.2s"
+                                        _hover={{
+                                            borderColor: "rgba(148, 163, 184, 0.5)",
+                                            bg: isDark ? "#252d4a" : "#eef2f7"
+                                        }}
+                                        textAlign="left"
+                                    >
+                                        <Text fontSize="sm" color={thumbnailFileName ? "#e2e8f0" : "#94a3b8"}>
+                                            {thumbnailFileName || "Chọn ảnh đại diện..."}
+                                        </Text>
+                                    </Box>
+                                    <input
+                                        ref={thumbnailInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => handleImageInputChange(e, "thumbnail")}
+                                        style={{ display: "none" }}
+                                    />
+                                </GridItem>
+                            </Grid>
+                            {/* Tiêu chí phân loại */}
+                            <Grid
+                                templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+                                gap={4}
+                                my={2}
+                            >
+                                <GridItem>
+                                    <Stack spacing={3}>
+                                        <Text mb={1}>Loại tế bào</Text>
+                                        <Stack direction={{ base: "column", sm: "row" }} gap={{ base: 2, sm: 6 }} wrap="wrap">
+                                            {TAXONOMY_OPTIONS.cell.map((option) => (
+                                                <label
+                                                    key={option.value}
+                                                    className="flex items-center cursor-pointer text-xs md:text-sm lg:text-base gap-1.5 md:gap-2.5"
+                                                    style={{
+                                                        color: isDark ? "white" : "#0f172a",
+                                                    }}
                                                 >
                                                     <input
-                                                        type="color"
-                                                        value={formData.theme_color || "#1f2852"}
-                                                        onChange={(e) => setFormData({ ...formData, theme_color: e.target.value })}
+                                                        type="radio"
+                                                        name="cell_type"
+                                                        value={option.value}
+                                                        checked={formData.cell_type === option.value}
+                                                        onChange={(e) =>
+                                                            setFormData({
+                                                                ...formData,
+                                                                cell_type: e.target.value,
+                                                            })
+                                                        }
+                                                        className="w-4 h-4 md:w-5 md:h-5 cursor-pointer transition-all duration-200"
                                                         style={{
-                                                            position: "absolute",
-                                                            top: 0,
-                                                            left: 0,
-                                                            width: "100%",
-                                                            height: "100%",
-                                                            opacity: 0,
-                                                            cursor: "pointer",
+                                                            appearance: "none",
+                                                            border: "2px solid",
+                                                            borderColor: isDark ? "white" : "#0f172a",
+                                                            borderRadius: "50%",
+                                                            backgroundColor:
+                                                                formData.cell_type === option.value
+                                                                    ? "#ffffff"
+                                                                    : "transparent",
+                                                            boxShadow:
+                                                                formData.cell_type === option.value
+                                                                    ? "inset 0 0 0 4px #111a3a"
+                                                                    : "none",
                                                         }}
                                                     />
-                                                </Box>
-                                            </Stack>
+                                                    {option.label}
+                                                </label>
+                                            ))}
                                         </Stack>
-                                    </GridItem>
-                                </Grid>
-                            </Stack>
-                        </Box>
-                        <Stack spacing={0} w="100%" mt={4}>
-                            {formData.description.map((block, index) => (
-                                <Box
-                                    key={index}
-                                    position="relative"
-                                >
-                                    <Button
-                                        position="absolute"
-                                        top="35px"
-                                        right="10px"
-                                        zIndex={10}
-                                        size="sm"
-                                        bg="red.500"
-                                        color="white"
-                                        _hover={{
-                                            bg: "red.600"
-                                        }}
-                                        onClick={() => removeDescriptionBlock(index)}
-                                    >
-                                        Xoá
-                                    </Button>
-                                    <BlockKingdom
-                                        block={block}
-                                        index={index}
-                                        updateBlockData={updateBlockData}
-                                        handleBlockImageChange={handleBlockImageChange}
-                                        getContrastColor={getContrastColor}
-                                        textColor={textColor}
-                                        themeColor={formData.theme_color}
-                                    />
-                                </Box>
-                            ))}
+                                    </Stack>
+                                </GridItem>
+                                <GridItem>
+                                    <Stack spacing={3}>
+                                        <Text mb={1}>Loại dinh dưỡng</Text>
+                                        <Stack direction={{ base: "column", sm: "row" }} gap={{ base: 2, sm: 6 }} wrap="wrap">
+                                            {TAXONOMY_OPTIONS.nutrition.map((option) => (
+                                                <label
+                                                    key={option.value}
+                                                    className="flex items-center cursor-pointer text-xs md:text-sm lg:text-base gap-1.5 md:gap-2.5"
+                                                    style={{
+                                                        color: isDark ? "white" : "#0f172a",
+                                                    }}
+                                                >
+                                                    <input
+                                                        type="radio"
+                                                        name="nutrition_mode"
+                                                        value={option.value}
+                                                        checked={formData.nutrition_mode === option.value}
+                                                        onChange={(e) =>
+                                                            setFormData({
+                                                                ...formData,
+                                                                nutrition_mode: e.target.value,
+                                                            })
+                                                        }
+                                                        className="w-4 h-4 md:w-5 md:h-5 cursor-pointer transition-all duration-200"
+                                                        style={{
+                                                            appearance: "none",
+                                                            border: "2px solid",
+                                                            borderColor: isDark ? "white" : "#0f172a",
+                                                            borderRadius: "50%",
+                                                            backgroundColor:
+                                                                formData.nutrition_mode === option.value
+                                                                    ? "#ffffff"
+                                                                    : "transparent",
+                                                            boxShadow:
+                                                                formData.nutrition_mode === option.value
+                                                                    ? "inset 0 0 0 4px #111a3a"
+                                                                    : "none",
+                                                        }}
+                                                    />
+                                                    {option.label}
+                                                </label>
+                                            ))}
+                                        </Stack>
+                                    </Stack>
+                                </GridItem>
+                            </Grid>
+                            <Grid
+                                templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+                                gap={4}
+                                my={2}
+                            >
+                                <GridItem>
+                                    <Stack spacing={3}>
+                                        <Text mb={1}>Loại sinh sản</Text>
+                                        <Stack direction={{ base: "column", sm: "row" }} gap={{ base: 2, sm: 6 }} wrap="wrap">
+                                            {TAXONOMY_OPTIONS.reproduction.map((option) => (
+                                                <label
+                                                    key={option.value}
+                                                    className="flex items-center cursor-pointer text-xs md:text-sm lg:text-base gap-1.5 md:gap-2.5"
+                                                    style={{
+                                                        color: isDark ? "white" : "#0f172a",
+                                                    }}
+                                                >
+                                                    <input
+                                                        type="radio"
+                                                        name="reproduction_type"
+                                                        value={option.value}
+                                                        checked={formData.reproduction_type === option.value}
+                                                        onChange={(e) =>
+                                                            setFormData({
+                                                                ...formData,
+                                                                reproduction_type: e.target.value,
+                                                            })
+                                                        }
+                                                        className="w-4 h-4 md:w-5 md:h-5 cursor-pointer transition-all duration-200"
+                                                        style={{
+                                                            appearance: "none",
+                                                            border: "2px solid",
+                                                            borderColor: isDark ? "white" : "#0f172a",
+                                                            borderRadius: "50%",
+                                                            backgroundColor:
+                                                                formData.reproduction_type === option.value
+                                                                    ? "#ffffff"
+                                                                    : "transparent",
+                                                            boxShadow:
+                                                                formData.reproduction_type === option.value
+                                                                    ? "inset 0 0 0 4px #111a3a"
+                                                                    : "none",
+                                                        }}
+                                                    />
+                                                    {option.label}
+                                                </label>
+                                            ))}
+                                        </Stack>
+                                    </Stack>
+                                </GridItem>
+                                <GridItem>
+                                    <Stack spacing={3}>
+                                        <Text mb={1}>Màu chủ đề</Text>
+                                        <Stack direction="row" gap={2} w="100%">
+                                            <Input
+                                                placeholder="VD: #2a69ac"
+                                                value={formData.theme_color}
+                                                onChange={(e) => setFormData({ ...formData, theme_color: e.target.value })}
+                                                bg={isDark ? "#1f2852" : "#ffffff"}
+                                                borderColor="rgba(148, 163, 184, 0.25)"
+                                            />
+                                            <Box
+                                                position="relative"
+                                                w="40px"
+                                                h="40px"
+                                                borderRadius="md"
+                                                border="1px solid"
+                                                borderColor="rgba(148, 163, 184, 0.25)"
+                                                bg={formData.theme_color || "#1f2852"}
+                                                flexShrink={0}
+                                            >
+                                                <input
+                                                    type="color"
+                                                    value={formData.theme_color || "#1f2852"}
+                                                    onChange={(e) => setFormData({ ...formData, theme_color: e.target.value })}
+                                                    style={{
+                                                        position: "absolute",
+                                                        top: 0,
+                                                        left: 0,
+                                                        width: "100%",
+                                                        height: "100%",
+                                                        opacity: 0,
+                                                        cursor: "pointer",
+                                                    }}
+                                                />
+                                            </Box>
+                                        </Stack>
+                                    </Stack>
+                                </GridItem>
+                            </Grid>
                         </Stack>
-                        <Box
-                            w="100%"
-                            mt={4}
-                            borderRadius="lg"
-                            bg={isDark ? "#111a3a" : "#ffffff"}
-                            border={isDark ? "none" : "1px solid #e2e8f0"}
-                        >
-                            <Text
-                                fontSize="2xl"
-                                fontWeight="bold"
-                                p={2}
-                                borderRadius="lg"
-                                textAlign="center"
-                            >Thêm nội dung</Text>
-                            <Box p={2}>
-                                <Grid
-                                    templateColumns={{ sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }}
-                                    gap={4}
+                    </Box>
+                    <Stack spacing={0} w="100%" mt={4}>
+                        {formData.description.map((block, index) => (
+                            <Box
+                                key={index}
+                                position="relative"
+                            >
+                                <Button
+                                    position="absolute"
+                                    top="35px"
+                                    right="10px"
+                                    zIndex={10}
+                                    size="sm"
+                                    bg="red.500"
+                                    color="white"
+                                    _hover={{
+                                        bg: "red.600"
+                                    }}
+                                    onClick={() => removeDescriptionBlock(index)}
                                 >
-                                    <Button
-                                        onClick={() => addDescriptionBlock("standard")}
-                                        bg={isDark ? "#1f2852" : "#f8fafc"}
-                                        color={isDark ? "white" : "#0f172a"}
-                                        _hover={{ bg: isDark ? "#252d4a" : "#eef2f7" }}
-                                        border="1px solid"
-                                        borderColor="rgba(148, 163, 184, 0.25)"
-                                    >
-                                        <Text>Văn Bản</Text>
-                                    </Button>
-                                    <Button
-                                        onClick={() => addDescriptionBlock("image_left")}
-                                        bg={isDark ? "#1f2852" : "#f8fafc"}
-                                        color={isDark ? "white" : "#0f172a"}
-                                        _hover={{ bg: isDark ? "#252d4a" : "#eef2f7" }}
-                                        border="1px solid"
-                                        borderColor="rgba(148, 163, 184, 0.25)"
-                                    >
-                                        <Text>Ảnh + Văn Bản</Text>
-                                    </Button>
-                                    <Button
-                                        onClick={() => addDescriptionBlock("image_right")}
-                                        bg={isDark ? "#1f2852" : "#f8fafc"}
-                                        color={isDark ? "white" : "#0f172a"}
-                                        _hover={{ bg: isDark ? "#252d4a" : "#eef2f7" }}
-                                        border="1px solid"
-                                        borderColor="rgba(148, 163, 184, 0.25)"
-                                    >
-                                        <Text>Văn Bản + Ảnh</Text>
-                                    </Button>
-                                    <Button
-                                        onClick={() => addDescriptionBlock("image_top")}
-                                        bg={isDark ? "#1f2852" : "#f8fafc"}
-                                        color={isDark ? "white" : "#0f172a"}
-                                        _hover={{ bg: isDark ? "#252d4a" : "#eef2f7" }}
-                                        border="1px solid"
-                                        borderColor="rgba(148, 163, 184, 0.25)"
-                                    >
-                                        <Text>Ảnh Trên + Văn Bản Dưới</Text>
-                                    </Button>
-                                </Grid>
+                                    Xoá
+                                </Button>
+                                <BlockKingdom
+                                    block={block}
+                                    index={index}
+                                    updateBlockData={updateBlockData}
+                                    handleBlockImageChange={handleBlockImageChange}
+                                    getContrastColor={getContrastColor}
+                                    textColor={textColor}
+                                    themeColor={formData.theme_color}
+                                />
                             </Box>
+                        ))}
+                    </Stack>
+                    <Box
+                        w="100%"
+                        mt={4}
+                        borderRadius="lg"
+                        bg={isDark ? "#111a3a" : "#ffffff"}
+                        border={isDark ? "none" : "1px solid #e2e8f0"}
+                    >
+                        <Text
+                            fontSize="2xl"
+                            fontWeight="bold"
+                            p={2}
+                            borderRadius="lg"
+                            textAlign="center"
+                        >Thêm nội dung</Text>
+                        <Box p={2}>
+                            <Grid
+                                templateColumns={{ sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }}
+                                gap={4}
+                            >
+                                <Button
+                                    onClick={() => addDescriptionBlock("standard")}
+                                    bg={isDark ? "#1f2852" : "#f8fafc"}
+                                    color={isDark ? "white" : "#0f172a"}
+                                    _hover={{ bg: isDark ? "#252d4a" : "#eef2f7" }}
+                                    border="1px solid"
+                                    borderColor="rgba(148, 163, 184, 0.25)"
+                                >
+                                    <Text>Văn Bản</Text>
+                                </Button>
+                                <Button
+                                    onClick={() => addDescriptionBlock("image_left")}
+                                    bg={isDark ? "#1f2852" : "#f8fafc"}
+                                    color={isDark ? "white" : "#0f172a"}
+                                    _hover={{ bg: isDark ? "#252d4a" : "#eef2f7" }}
+                                    border="1px solid"
+                                    borderColor="rgba(148, 163, 184, 0.25)"
+                                >
+                                    <Text>Ảnh + Văn Bản</Text>
+                                </Button>
+                                <Button
+                                    onClick={() => addDescriptionBlock("image_right")}
+                                    bg={isDark ? "#1f2852" : "#f8fafc"}
+                                    color={isDark ? "white" : "#0f172a"}
+                                    _hover={{ bg: isDark ? "#252d4a" : "#eef2f7" }}
+                                    border="1px solid"
+                                    borderColor="rgba(148, 163, 184, 0.25)"
+                                >
+                                    <Text>Văn Bản + Ảnh</Text>
+                                </Button>
+                                <Button
+                                    onClick={() => addDescriptionBlock("image_top")}
+                                    bg={isDark ? "#1f2852" : "#f8fafc"}
+                                    color={isDark ? "white" : "#0f172a"}
+                                    _hover={{ bg: isDark ? "#252d4a" : "#eef2f7" }}
+                                    border="1px solid"
+                                    borderColor="rgba(148, 163, 184, 0.25)"
+                                >
+                                    <Text>Ảnh Trên + Văn Bản Dưới</Text>
+                                </Button>
+                            </Grid>
                         </Box>
-                        <Button
-                            mt={4}
-                            w="100%"
-                            bg="#2a69ac"
-                            color="white"
-                            _hover={{ bg: "#2c5282" }}
-                            onClick={submitForm}
-                        >
-                            Hoàn thành
-                        </Button>
-                    </GridItem>
-                    {/* Review Page */}
-                    <GridItem colSpan={{ base: 12, lg: 4 }}>
-                        <Review
-                            formData={formData}
-                            templateImgUrl={templateImgUrl}
-                            templateBgUrl={templateBgUrl}
-                            description={formData.description}
-                        />
-                    </GridItem>
-                </Grid>
+                    </Box>
+                    <Button
+                        mt={4}
+                        w="100%"
+                        bg="#2a69ac"
+                        color="white"
+                        _hover={{ bg: "#2c5282" }}
+                        onClick={submitForm}
+                    >
+                        Hoàn thành
+                    </Button>
+                </GridItem>
+                {/* Review Page */}
+                <GridItem colSpan={{ base: 12, lg: 4 }}>
+                    <Review
+                        formData={formData}
+                        templateImgUrl={templateImgUrl}
+                        templateBgUrl={templateBgUrl}
+                        description={formData.description}
+                    />
+                </GridItem>
+            </Grid>
         </Box>
     )
 }
