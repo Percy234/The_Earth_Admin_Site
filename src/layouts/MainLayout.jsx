@@ -12,10 +12,17 @@ export default function MainLayout() {
     const links = [
         { name: 'Tổng quan', path: '/' },
         { name: 'Danh sách', path: '/kingdoms/manage' },
-        { name: 'Thêm giới mới', path: '/kingdoms/addKingdom' },
-        { name: 'Thêm ngành mới', path: '/phylums/addPhylum' },
-        { name: 'Thêm lớp mới', path: '/classes/addClass' },
-        { name: 'Thêm bộ mới', path: '/orders/addOrder' },
+        {
+            name: 'Thêm mới',
+            subLinks: [
+                { name: 'Thêm giới mới', path: '/kingdoms/addKingdom' },
+                { name: 'Thêm ngành mới', path: '/phylums/addPhylum' },
+                { name: 'Thêm lớp mới', path: '/classes/addClass' },
+                { name: 'Thêm bộ mới', path: '/orders/addOrder' },
+                { name: 'Thêm họ mới', path: '/families/addFamily' },
+                { name: 'Thêm chi mới', path: '/genuses/addGenus' },
+            ]
+        }
     ];
 
     const location = useLocation();

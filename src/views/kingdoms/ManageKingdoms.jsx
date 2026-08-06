@@ -14,6 +14,8 @@ import KINGDOM_API from "../../services/kingdom.api";
 import PHYLUM_API from "../../services/phylum.api";
 import CLASS_API from "../../services/class.api";
 import ORDER_API from "../../services/order.api";
+import FAMILY_API from "../../services/family.api";
+import GENUS_API from "../../services/genus.api";
 import { toaster } from "../../components/ui/Toaster";
 import TaxonomyCard from "../../components/taxonomy/TaxonomyCard";
 
@@ -27,6 +29,8 @@ export default function ManageKingdoms() {
     const [phylums, setPhylums] = useState([]);
     const [classes, setClasses] = useState([]);
     const [orders, setOrders] = useState([]);
+    const [families, setFamilies] = useState([]);
+    const [genuses, setGenuses] = useState([]);
     const [searchParams] = useSearchParams();
     const searchKeyword = searchParams.get("search") || "";
     const [isLoading, setIsLoading] = useState(true);
@@ -39,16 +43,20 @@ export default function ManageKingdoms() {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const [resK, resP, resC, resO] = await Promise.all([
+            const [resK, resP, resC, resO, resF, resG] = await Promise.all([
                 KINGDOM_API.getAll(),
                 PHYLUM_API.getAll(),
                 CLASS_API.getAll(),
-                ORDER_API.getAll()
+                ORDER_API.getAll(),
+                FAMILY_API.getAll(),
+                GENUS_API.getAll()
             ]);
             setKingdoms(resK.data || resK);
             setPhylums(resP.data || resP);
             setClasses(resC.data || resC);
             setOrders(resO.data || resO);
+            setFamilies(resF.data || resF);
+            setGenuses(resG.data || resG);
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu phân loài:", error);
             toaster.create({
@@ -80,6 +88,12 @@ export default function ManageKingdoms() {
             } else if (type === "order") {
                 res = await ORDER_API.deleteOrder(id);
                 if (res?.status === "success") setOrders(prev => prev.filter(item => (item._id || item.id) !== id));
+            } else if (type === "family") {
+                res = await FAMILY_API.deleteFamily(id);
+                if (res?.status === "success") setFamilies(prev => prev.filter(item => (item._id || item.id) !== id));
+            } else if (type === "genus") {
+                res = await GENUS_API.deleteGenus(id);
+                if (res?.status === "success") setGenuses(prev => prev.filter(item => (item._id || item.id) !== id));
             }
 
             if (res?.status === "success") {
@@ -119,6 +133,8 @@ export default function ManageKingdoms() {
         { key: "phylum", label: "Ngành" },
         { key: "class", label: "Lớp" },
         { key: "order", label: "Bộ" },
+        { key: "family", label: "Họ" },
+        { key: "genus", label: "Chi" },
     ];
 
     const getActiveData = () => {
@@ -159,6 +175,26 @@ export default function ManageKingdoms() {
                         return <>Thuộc lớp: <strong>{cName}</strong></>;
                     },
                     editRoute: (id) => `/orders/addOrder?id=${id}`
+                };
+            case "family":
+                return {
+                    list: filterItems(families),
+                    emptyText: "họ",
+                    getParentText: (f) => {
+                        const oName = orders.find(o => (o._id || o.id) === f.order_id)?.normal_name || "Không rõ";
+                        return <>Thuộc bộ: <strong>{oName}</strong></>;
+                    },
+                    editRoute: (id) => `/families/addFamily?id=${id}`
+                };
+            case "genus":
+                return {
+                    list: filterItems(genuses),
+                    emptyText: "chi",
+                    getParentText: (g) => {
+                        const fName = families.find(f => (f._id || f.id) === g.family_id)?.normal_name || "Không rõ";
+                        return <>Thuộc họ: <strong>{fName}</strong></>;
+                    },
+                    editRoute: (id) => `/genuses/addGenus?id=${id}`
                 };
             default:
                 return { list: [], emptyText: "dữ liệu", getParentText: () => null, editRoute: () => "" };

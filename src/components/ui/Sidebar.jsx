@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
     Box,
     Text,
@@ -6,11 +7,122 @@ import {
     Icon,
     IconButton,
     useDisclosure,
-} from '@chakra-ui/react'
+} from '@chakra-ui/react';
 
-import { LuMenu } from "react-icons/lu";
-import { NavLink } from 'react-router-dom'
-import { useTheme } from 'next-themes'
+import { LuMenu, LuChevronDown, LuChevronRight } from "react-icons/lu";
+import { NavLink, useLocation } from 'react-router-dom';
+import { useTheme } from 'next-themes';
+
+function ExpandableNavItem({ link, isDark, onNavigate }) {
+    const location = useLocation();
+    const isSubActive = link.subLinks?.some(sub =>
+        location.pathname.toLowerCase() === sub.path.toLowerCase()
+    );
+    const [isExpanded, setIsExpanded] = useState(isSubActive || true);
+
+    useEffect(() => {
+        if (isSubActive) {
+            setIsExpanded(true);
+        }
+    }, [location.pathname, isSubActive]);
+
+    if (!link.subLinks) {
+        return (
+            <NavLink
+                to={link.path}
+                end={true}
+                onClick={onNavigate}
+                style={({ isActive }) => ({
+                    display: 'block',
+                    borderRadius: '14px',
+                    padding: '14px 16px',
+                    fontWeight: 600,
+                    color: isActive
+                        ? (isDark ? '#60a5fa' : '#2563eb')
+                        : (isDark ? '#f8fafc' : '#0f172a'),
+                    background: isActive
+                        ? (isDark ? 'rgba(59, 130, 246, 0.18)' : '#eef4ff')
+                        : 'transparent',
+                    border: '1px solid',
+                    borderColor: isActive
+                        ? (isDark ? '#3b82f6' : '#c7d2fe')
+                        : 'transparent',
+                    transition: 'all 0.2s ease',
+                })}
+            >
+                {link.name}
+            </NavLink>
+        );
+    }
+
+    return (
+        <Box>
+            <Box
+                onClick={() => setIsExpanded(prev => !prev)}
+                cursor="pointer"
+                borderRadius="14px"
+                p="14px 16px"
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                fontWeight={600}
+                color={isSubActive ? (isDark ? '#60a5fa' : '#2563eb') : (isDark ? '#f8fafc' : '#0f172a')}
+                bg={isSubActive ? (isDark ? 'rgba(59, 130, 246, 0.08)' : 'rgba(59, 130, 246, 0.05)') : 'transparent'}
+                _hover={{ bg: isDark ? 'rgba(255, 255, 255, 0.05)' : '#f8fafc' }}
+                transition="all 0.2s ease"
+            >
+                <Text fontWeight={600}>{link.name}</Text>
+                <Icon
+                    as={isExpanded ? LuChevronDown : LuChevronRight}
+                    boxSize={4}
+                    color={isSubActive ? (isDark ? '#60a5fa' : '#2563eb') : 'gray.400'}
+                    transition="transform 0.2s ease"
+                />
+            </Box>
+
+            {isExpanded && (
+                <VStack
+                    spacing={1}
+                    align="stretch"
+                    mt={1}
+                    ml={3}
+                    pl={3}
+                    borderLeft="2px solid"
+                    borderColor={isSubActive ? (isDark ? '#3b82f6' : '#93c5fd') : (isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0')}
+                >
+                    {link.subLinks.map((sub) => (
+                        <NavLink
+                            key={sub.path}
+                            to={sub.path}
+                            end={true}
+                            onClick={onNavigate}
+                            style={({ isActive }) => ({
+                                display: 'block',
+                                borderRadius: '10px',
+                                padding: '10px 14px',
+                                fontSize: '13px',
+                                fontWeight: isActive ? 600 : 500,
+                                color: isActive
+                                    ? (isDark ? '#60a5fa' : '#2563eb')
+                                    : (isDark ? '#cbd5e1' : '#475569'),
+                                background: isActive
+                                    ? (isDark ? 'rgba(59, 130, 246, 0.18)' : '#eef4ff')
+                                    : 'transparent',
+                                border: '1px solid',
+                                borderColor: isActive
+                                    ? (isDark ? '#3b82f6' : '#c7d2fe')
+                                    : 'transparent',
+                                transition: 'all 0.2s ease',
+                            })}
+                        >
+                            {sub.name}
+                        </NavLink>
+                    ))}
+                </VStack>
+            )}
+        </Box>
+    );
+}
 
 function SidebarContent({ links, isDark, onNavigate }) {
     return (
@@ -61,45 +173,14 @@ function SidebarContent({ links, isDark, onNavigate }) {
                 </Text>
 
                 <VStack spacing={2} align="stretch">
-                    {links.map((link) => {
-                        const isHomeLink = link.path === '/'
-
-                        return (
-                            <NavLink
-                                key={link.path}
-                                to={link.path}
-                                end={true}
-                                onClick={onNavigate}
-                                style={({ isActive }) => ({
-                                    display: 'block',
-                                    borderRadius: '14px',
-                                    padding: '14px 16px',
-                                    fontWeight: 600,
-                                    color: isDark ? '#f8fafc' : '#0f172a',
-                                    background: isActive
-                                        ? (
-                                            isDark
-                                                ? 'rgba(59, 130, 246, 0.18)'
-                                                : '#eef4ff'
-                                        )
-                                        : 'transparent',
-                                    border: isActive
-                                        ? '1px solid'
-                                        : '1px solid transparent',
-                                    borderColor: isActive
-                                        ? (
-                                            isDark
-                                                ? '#3b82f6'
-                                                : '#c7d2fe'
-                                        )
-                                        : 'transparent',
-                                    transition: 'all 0.2s ease',
-                                })}
-                            >
-                                {link.name}
-                            </NavLink>
-                        )
-                    })}
+                    {links.map((link, idx) => (
+                        <ExpandableNavItem
+                            key={link.path || link.name || idx}
+                            link={link}
+                            isDark={isDark}
+                            onNavigate={onNavigate}
+                        />
+                    ))}
                 </VStack>
             </Box>
 
@@ -117,14 +198,14 @@ function SidebarContent({ links, isDark, onNavigate }) {
                 </Text>
             </Box>
         </Box>
-    )
+    );
 }
 
 export default function Sidebar({ links }) {
-    const { theme } = useTheme()
-    const isDark = theme === 'dark'
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
 
-    const { open, onOpen, onClose } = useDisclosure()
+    const { open, onOpen, onClose } = useDisclosure();
 
     return (
         <>
@@ -197,5 +278,5 @@ export default function Sidebar({ links }) {
                 />
             )}
         </>
-    )
+    );
 }

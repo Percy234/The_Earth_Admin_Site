@@ -8,6 +8,8 @@ import ManageKingdoms from "../views/kingdoms/ManageKingdoms";
 import AddPhylum from "../views/phylums/AddPhylum";
 import AddClass from "../views/classes/AddClass";
 import AddOrder from "../views/orders/AddOrder";
+import AddFamily from "../views/families/AddFamily";
+import AddGenus from "../views/genuses/AddGenus";
 import NotFound from "../views/NotFound";
 
 const router = createBrowserRouter([
@@ -82,6 +84,38 @@ const router = createBrowserRouter([
             },
             {
                 path: "/orders/manage",
+                element: <ManageKingdoms />
+            },
+            {
+                path: "/families/addFamily",
+                element: <AddFamily />
+            },
+            {
+                path: "/families/addfamily",
+                element: <AddFamily />
+            },
+            {
+                path: "/families/add",
+                element: <AddFamily />
+            },
+            {
+                path: "/families/manage",
+                element: <ManageKingdoms />
+            },
+            {
+                path: "/genuses/addGenus",
+                element: <AddGenus />
+            },
+            {
+                path: "/genuses/addgenus",
+                element: <AddGenus />
+            },
+            {
+                path: "/genuses/add",
+                element: <AddGenus />
+            },
+            {
+                path: "/genuses/manage",
                 element: <ManageKingdoms />
             },
             {

@@ -184,7 +184,7 @@ export default function AddOrder() {
 
             console.log("Sending Order data:", payload);
 
-            const res = isEdit 
+            const res = isEdit
                 ? await ORDER_API.updateOrder(id, payload)
                 : await ORDER_API.createOrder(payload);
 
@@ -398,7 +398,7 @@ export default function AddOrder() {
                                 <GridItem>
                                     <Text mb={1}>Tên thường gọi</Text>
                                     <Input
-                                        placeholder="VD: Bộ Cánh cứng"
+                                        placeholder="Tên bộ"
                                         value={formData.normal_name}
                                         onChange={(e) => setFormData({ ...formData, normal_name: e.target.value })}
                                         bg={isDark ? "#1f2852" : "#ffffff"}
@@ -408,7 +408,7 @@ export default function AddOrder() {
                                 <GridItem>
                                     <Text mb={1}>Tên khoa học</Text>
                                     <Input
-                                        placeholder="VD: Coleoptera"
+                                        placeholder="Tên chuyên môn"
                                         value={formData.science_name}
                                         onChange={(e) => setFormData({ ...formData, science_name: e.target.value })}
                                         bg={isDark ? "#1f2852" : "#ffffff"}
