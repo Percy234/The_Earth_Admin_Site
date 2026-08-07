@@ -18,7 +18,7 @@ function ExpandableNavItem({ link, isDark, onNavigate }) {
     const isSubActive = link.subLinks?.some(sub =>
         location.pathname.toLowerCase() === sub.path.toLowerCase()
     );
-    const [isExpanded, setIsExpanded] = useState(isSubActive || true);
+    const [isExpanded, setIsExpanded] = useState(!!isSubActive);
 
     useEffect(() => {
         if (isSubActive) {

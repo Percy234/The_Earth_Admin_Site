@@ -10,6 +10,7 @@ import AddClass from "../views/classes/AddClass";
 import AddOrder from "../views/orders/AddOrder";
 import AddFamily from "../views/families/AddFamily";
 import AddGenus from "../views/genuses/AddGenus";
+import AddSpecies from "../views/species/AddSpecies";
 import NotFound from "../views/NotFound";
 
 const router = createBrowserRouter([
@@ -116,6 +117,22 @@ const router = createBrowserRouter([
             },
             {
                 path: "/genuses/manage",
+                element: <ManageKingdoms />
+            },
+            {
+                path: "/species/addSpecies",
+                element: <AddSpecies />
+            },
+            {
+                path: "/species/addspecies",
+                element: <AddSpecies />
+            },
+            {
+                path: "/species/add",
+                element: <AddSpecies />
+            },
+            {
+                path: "/species/manage",
                 element: <ManageKingdoms />
             },
             {

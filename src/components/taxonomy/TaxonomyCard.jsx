@@ -124,6 +124,36 @@ export default function TaxonomyCard({
                         <Text color="gray.400">Sinh sản:</Text>
                         <Badge colorScheme="purple" variant="outline">{reproductionLabel}</Badge>
                     </HStack>
+
+                    {/* Hiển thị chi tiết cho cấp Loài nếu có */}
+                    {item.average_size?.value && (
+                        <HStack justify="space-between">
+                            <Text color="gray.400">Kích thước:</Text>
+                            <Badge colorScheme="teal" variant="subtle">{item.average_size.value} {item.average_size.unit}</Badge>
+                        </HStack>
+                    )}
+                    {item.average_weight?.value && (
+                        <HStack justify="space-between">
+                            <Text color="gray.400">Trọng lượng:</Text>
+                            <Badge colorScheme="orange" variant="subtle">{item.average_weight.value} {item.average_weight.unit}</Badge>
+                        </HStack>
+                    )}
+                    {item.lifespan?.value && (
+                        <HStack justify="space-between">
+                            <Text color="gray.400">Tuổi thọ:</Text>
+                            <Badge colorScheme="pink" variant="subtle">{item.lifespan.value} {item.lifespan.unit}</Badge>
+                        </HStack>
+                    )}
+                    {Array.isArray(item.habitat) && item.habitat.length > 0 && (
+                        <Box pt={1}>
+                            <Text color="gray.400" mb={1}>Môi trường sống:</Text>
+                            <HStack gap={1} wrap="wrap">
+                                {item.habitat.map((h, idx) => (
+                                    <Badge key={idx} fontSize="10px" colorScheme="cyan" variant="solid">{h}</Badge>
+                                ))}
+                            </HStack>
+                        </Box>
+                    )}
                 </Stack>
 
                 <HStack justify="space-between" pt={3} borderTop="1px solid" borderColor={isDark ? "rgba(255,255,255,0.06)" : "#eef2f7"}>

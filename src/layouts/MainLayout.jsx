@@ -21,6 +21,7 @@ export default function MainLayout() {
                 { name: 'Thêm bộ mới', path: '/orders/addOrder' },
                 { name: 'Thêm họ mới', path: '/families/addFamily' },
                 { name: 'Thêm chi mới', path: '/genuses/addGenus' },
+                { name: 'Thêm loài mới', path: '/species/addSpecies' },
             ]
         }
     ];

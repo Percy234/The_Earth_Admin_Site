@@ -16,6 +16,7 @@ import CLASS_API from "../../services/class.api";
 import ORDER_API from "../../services/order.api";
 import FAMILY_API from "../../services/family.api";
 import GENUS_API from "../../services/genus.api";
+import SPECIES_API from "../../services/species.api";
 import { toaster } from "../../components/ui/Toaster";
 import TaxonomyCard from "../../components/taxonomy/TaxonomyCard";
 
@@ -31,6 +32,7 @@ export default function ManageKingdoms() {
     const [orders, setOrders] = useState([]);
     const [families, setFamilies] = useState([]);
     const [genuses, setGenuses] = useState([]);
+    const [speciesList, setSpeciesList] = useState([]);
     const [searchParams] = useSearchParams();
     const searchKeyword = searchParams.get("search") || "";
     const [isLoading, setIsLoading] = useState(true);
@@ -43,13 +45,14 @@ export default function ManageKingdoms() {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const [resK, resP, resC, resO, resF, resG] = await Promise.all([
+            const [resK, resP, resC, resO, resF, resG, resS] = await Promise.all([
                 KINGDOM_API.getAll(),
                 PHYLUM_API.getAll(),
                 CLASS_API.getAll(),
                 ORDER_API.getAll(),
                 FAMILY_API.getAll(),
-                GENUS_API.getAll()
+                GENUS_API.getAll(),
+                SPECIES_API.getAll()
             ]);
             setKingdoms(resK.data || resK);
             setPhylums(resP.data || resP);
@@ -57,6 +60,7 @@ export default function ManageKingdoms() {
             setOrders(resO.data || resO);
             setFamilies(resF.data || resF);
             setGenuses(resG.data || resG);
+            setSpeciesList(resS.data || resS);
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu phân loài:", error);
             toaster.create({
@@ -94,6 +98,9 @@ export default function ManageKingdoms() {
             } else if (type === "genus") {
                 res = await GENUS_API.deleteGenus(id);
                 if (res?.status === "success") setGenuses(prev => prev.filter(item => (item._id || item.id) !== id));
+            } else if (type === "species") {
+                res = await SPECIES_API.deleteSpecies(id);
+                if (res?.status === "success") setSpeciesList(prev => prev.filter(item => (item._id || item.id) !== id));
             }
 
             if (res?.status === "success") {
@@ -135,6 +142,7 @@ export default function ManageKingdoms() {
         { key: "order", label: "Bộ" },
         { key: "family", label: "Họ" },
         { key: "genus", label: "Chi" },
+        { key: "species", label: "Loài" },
     ];
 
     const getActiveData = () => {
@@ -195,6 +203,16 @@ export default function ManageKingdoms() {
                         return <>Thuộc họ: <strong>{fName}</strong></>;
                     },
                     editRoute: (id) => `/genuses/addGenus?id=${id}`
+                };
+            case "species":
+                return {
+                    list: filterItems(speciesList),
+                    emptyText: "loài",
+                    getParentText: (s) => {
+                        const gName = genuses.find(g => (g._id || g.id) === s.genus_id)?.normal_name || "Không rõ";
+                        return <>Thuộc chi: <strong>{gName}</strong></>;
+                    },
+                    editRoute: (id) => `/species/addSpecies?id=${id}`
                 };
             default:
                 return { list: [], emptyText: "dữ liệu", getParentText: () => null, editRoute: () => "" };
