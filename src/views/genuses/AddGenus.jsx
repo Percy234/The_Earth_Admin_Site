@@ -781,9 +781,9 @@ export default function AddGenus() {
                     <Button
                         mt={4}
                         w="100%"
-                        bg="#2a69ac"
+                        bg="#38A169"
                         color="white"
-                        _hover={{ bg: "#2c5282" }}
+                        _hover={{ bg: "#2F855A" }}
                         onClick={submitForm}
                     >
                         Hoàn thành

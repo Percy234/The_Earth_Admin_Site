@@ -44,11 +44,11 @@ export default function MainLayout() {
             <Box display="flex" minH="100vh">
                 <Sidebar links={links} />
 
-                <Box flex="1" minW="0" ml={{ base: 0, md: '260px', lg: '280px' }} display="flex" flexDirection="column">
+                <Box flex="1" minW="0" ml={{ base: 0, md: '240px' }} display="flex" flexDirection="column">
                     <Box
                         position="fixed"
                         top={0}
-                        left={{ base: 0, md: '260px', lg: '280px' }}
+                        left={{ base: 0, md: '240px' }}
                         right={0}
                         zIndex={10}
                         bg={isDark ? '#0b1026' : '#f5f7fb'}

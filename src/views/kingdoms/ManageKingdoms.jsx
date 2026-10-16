@@ -230,19 +230,33 @@ export default function ManageKingdoms() {
             </Box>
 
             {/* Custom Tab Selector */}
-            <HStack gap={4} mb={6} borderBottom="1px solid" borderColor={isDark ? "rgba(255,255,255,0.06)" : "#eef2f7"} pb={3}>
-                {tabs.map((tab) => (
-                    <Button
-                        key={tab.key}
-                        variant={activeTab === tab.key ? "solid" : "ghost"}
-                        bg={activeTab === tab.key ? "#2a69ac" : "transparent"}
-                        color={activeTab === tab.key ? "white" : (isDark ? "gray.400" : "gray.600")}
-                        _hover={{ bg: activeTab === tab.key ? "#2c5282" : (isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.02)") }}
-                        onClick={() => setActiveTab(tab.key)}
-                    >
-                        {tab.label}
-                    </Button>
-                ))}
+            <HStack gap={3} mb={6} flexWrap="wrap" borderBottom={isDark ? "2px solid rgba(255,255,255,0.15)" : "3px solid black"} pb={4}>
+                {tabs.map((tab) => {
+                    const isActive = activeTab === tab.key;
+                    return (
+                        <Button
+                            key={tab.key}
+                            borderRadius="0"
+                            border={isDark ? "2px solid white" : "2px solid black"}
+                            bg={isActive ? "#38A169" : (isDark ? "#141e33" : "white")}
+                            color={isActive ? "white" : (isDark ? "white" : "black")}
+                            boxShadow={isDark ? "2px 2px 0px 0px white" : "2px 2px 0px 0px black"}
+                            fontWeight="800"
+                            fontSize="xs"
+                            textTransform="uppercase"
+                            letterSpacing="0.5px"
+                            _hover={{
+                                bg: "#38A169",
+                                color: "white",
+                                transform: "translate(-1px, -1px)"
+                            }}
+                            transition="all 0.15s ease-in-out"
+                            onClick={() => setActiveTab(tab.key)}
+                        >
+                            {tab.label}
+                        </Button>
+                    );
+                })}
             </HStack>
 
             {isLoading ? (
@@ -253,10 +267,10 @@ export default function ManageKingdoms() {
                 <Box
                     bg={isDark ? "#111a3a" : "white"}
                     p={8}
-                    borderRadius="xl"
+                    borderRadius="0"
                     textAlign="center"
-                    border="1px solid"
-                    borderColor={isDark ? "#1d2a5e" : "#e2e8f0"}
+                    border={isDark ? "2px solid white" : "3px solid black"}
+                    boxShadow={isDark ? "4px 4px 0px 0px white" : "4px 4px 0px 0px black"}
                 >
                     <Text color="gray.400" fontSize="lg">
                         {searchKeyword ? `Không tìm thấy ${activeConfig.emptyText} phù hợp với từ khóa.` : `Chưa có ${activeConfig.emptyText} nào được tạo.`}

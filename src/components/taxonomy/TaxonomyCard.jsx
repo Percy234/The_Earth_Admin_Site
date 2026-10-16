@@ -36,13 +36,14 @@ export default function TaxonomyCard({
         <Box
             key={itemId}
             bg={isDark ? "#111a3a" : "white"}
-            borderRadius="xl"
-            overflow="hidden"
-            boxShadow="sm"
-            border="1px solid"
-            borderColor={isDark ? "#1d2a5e" : "#e2e8f0"}
-            transition="all 0.2s"
-            _hover={{ transform: "translateY(-4px)", boxShadow: "md" }}
+            borderRadius="0"
+            boxShadow={isDark ? "4px 4px 0px 0px white" : "4px 4px 0px 0px black"}
+            border={isDark ? "2px solid white" : "3px solid black"}
+            transition="all 0.15s ease-in-out"
+            _hover={{
+                transform: "translate(-2px, -2px)",
+                boxShadow: isDark ? "6px 6px 0px 0px white" : "6px 6px 0px 0px black"
+            }}
             display="flex"
             flexDirection="column"
             position="relative"
@@ -54,6 +55,7 @@ export default function TaxonomyCard({
                 bg={item.theme_color || "#1f2852"}
                 position="relative"
                 overflow="hidden"
+                borderBottom={isDark ? "2px solid white" : "3px solid black"}
             >
                 {item.background_url && (
                     <Image
@@ -74,12 +76,11 @@ export default function TaxonomyCard({
                 right="16px"
                 w="60px"
                 h="60px"
-                borderRadius="md"
+                borderRadius="0"
                 overflow="hidden"
                 bg="white"
-                border="3px solid"
-                borderColor={isDark ? "#111a3a" : "white"}
-                boxShadow="sm"
+                border={isDark ? "2px solid white" : "2px solid black"}
+                boxShadow={isDark ? "2px 2px 0px 0px white" : "2px 2px 0px 0px black"}
             >
                 {item.thumbnail_url ? (
                     <Image
@@ -90,7 +91,7 @@ export default function TaxonomyCard({
                         objectFit="cover"
                     />
                 ) : (
-                    <Stack justify="center" h="100%" align="center" color="gray.300">
+                    <Stack justify="center" h="100%" align="center" color="gray.400">
                         <LuUpload size={20} />
                     </Stack>
                 )}
@@ -114,34 +115,34 @@ export default function TaxonomyCard({
                 <Stack spacing={2} mb={4} fontSize="xs" flex="1">
                     <HStack justify="space-between">
                         <Text color="gray.400">Loại tế bào:</Text>
-                        <Badge colorScheme="blue" variant="outline">{cellLabel}</Badge>
+                        <Badge borderRadius="0" border={isDark ? "1px solid rgba(255,255,255,0.4)" : "1.5px solid black"} colorScheme="blue" variant="outline">{cellLabel}</Badge>
                     </HStack>
                     <HStack justify="space-between">
                         <Text color="gray.400">Dinh dưỡng:</Text>
-                        <Badge colorScheme="green" variant="outline">{nutritionLabel}</Badge>
+                        <Badge borderRadius="0" border={isDark ? "1px solid rgba(255,255,255,0.4)" : "1.5px solid black"} colorScheme="green" variant="outline">{nutritionLabel}</Badge>
                     </HStack>
                     <HStack justify="space-between">
                         <Text color="gray.400">Sinh sản:</Text>
-                        <Badge colorScheme="purple" variant="outline">{reproductionLabel}</Badge>
+                        <Badge borderRadius="0" border={isDark ? "1px solid rgba(255,255,255,0.4)" : "1.5px solid black"} colorScheme="purple" variant="outline">{reproductionLabel}</Badge>
                     </HStack>
 
                     {/* Hiển thị chi tiết cho cấp Loài nếu có */}
                     {item.average_size?.value && (
                         <HStack justify="space-between">
                             <Text color="gray.400">Kích thước:</Text>
-                            <Badge colorScheme="teal" variant="subtle">{item.average_size.value} {item.average_size.unit}</Badge>
+                            <Badge borderRadius="0" border={isDark ? "1px solid rgba(255,255,255,0.4)" : "1.5px solid black"} colorScheme="teal" variant="subtle">{item.average_size.value} {item.average_size.unit}</Badge>
                         </HStack>
                     )}
                     {item.average_weight?.value && (
                         <HStack justify="space-between">
                             <Text color="gray.400">Trọng lượng:</Text>
-                            <Badge colorScheme="orange" variant="subtle">{item.average_weight.value} {item.average_weight.unit}</Badge>
+                            <Badge borderRadius="0" border={isDark ? "1px solid rgba(255,255,255,0.4)" : "1.5px solid black"} colorScheme="orange" variant="subtle">{item.average_weight.value} {item.average_weight.unit}</Badge>
                         </HStack>
                     )}
                     {item.lifespan?.value && (
                         <HStack justify="space-between">
                             <Text color="gray.400">Tuổi thọ:</Text>
-                            <Badge colorScheme="pink" variant="subtle">{item.lifespan.value} {item.lifespan.unit}</Badge>
+                            <Badge borderRadius="0" border={isDark ? "1px solid rgba(255,255,255,0.4)" : "1.5px solid black"} colorScheme="pink" variant="subtle">{item.lifespan.value} {item.lifespan.unit}</Badge>
                         </HStack>
                     )}
                     {Array.isArray(item.habitat) && item.habitat.length > 0 && (
@@ -149,36 +150,56 @@ export default function TaxonomyCard({
                             <Text color="gray.400" mb={1}>Môi trường sống:</Text>
                             <HStack gap={1} wrap="wrap">
                                 {item.habitat.map((h, idx) => (
-                                    <Badge key={idx} fontSize="10px" colorScheme="cyan" variant="solid">{h}</Badge>
+                                    <Badge key={idx} borderRadius="0" border={isDark ? "1px solid rgba(255,255,255,0.4)" : "1px solid black"} fontSize="10px" colorScheme="cyan" variant="solid">{h}</Badge>
                                 ))}
                             </HStack>
                         </Box>
                     )}
                 </Stack>
 
-                <HStack justify="space-between" pt={3} borderTop="1px solid" borderColor={isDark ? "rgba(255,255,255,0.06)" : "#eef2f7"}>
+                <HStack justify="space-between" pt={3} borderTop={isDark ? "2px solid white" : "3px solid black"}>
                     <Button
                         size="sm"
-                        variant="ghost"
-                        colorScheme="blue"
+                        borderRadius="0"
+                        border={isDark ? "2px solid white" : "2px solid black"}
+                        bg={isDark ? "#141e33" : "white"}
+                        color={isDark ? "white" : "black"}
+                        boxShadow={isDark ? "2px 2px 0px 0px white" : "2px 2px 0px 0px black"}
+                        _hover={{
+                            bg: "#38A169",
+                            color: "white",
+                            transform: "translate(-1px, -1px)",
+                            boxShadow: isDark ? "3px 3px 0px 0px white" : "3px 3px 0px 0px black"
+                        }}
+                        transition="all 0.15s ease-in-out"
                         onClick={onEdit}
                         display="flex"
                         alignItems="center"
                         gap={1.5}
                     >
-                        <LuPencil size={16} />
+                        <LuPencil size={15} />
                         Chỉnh sửa
                     </Button>
                     <Button
                         size="sm"
-                        variant="ghost"
-                        colorScheme="red"
+                        borderRadius="0"
+                        border={isDark ? "2px solid white" : "2px solid black"}
+                        bg={isDark ? "#141e33" : "white"}
+                        color={isDark ? "white" : "black"}
+                        boxShadow={isDark ? "2px 2px 0px 0px white" : "2px 2px 0px 0px black"}
+                        _hover={{
+                            bg: "#E53E3E",
+                            color: "white",
+                            transform: "translate(-1px, -1px)",
+                            boxShadow: isDark ? "3px 3px 0px 0px white" : "3px 3px 0px 0px black"
+                        }}
+                        transition="all 0.15s ease-in-out"
                         onClick={onDelete}
                         display="flex"
                         alignItems="center"
                         gap={1.5}
                     >
-                        <LuTrash2 size={16} />
+                        <LuTrash2 size={15} />
                         Xóa
                     </Button>
                 </HStack>

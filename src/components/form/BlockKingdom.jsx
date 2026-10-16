@@ -2,6 +2,7 @@ import KINGDOM_API from "../../services/kingdom.api";
 import { Box, Button, Grid, GridItem, Text, Textarea, Input, Stack } from "@chakra-ui/react";
 import { useRef } from "react";
 import { useTheme } from "next-themes";
+import AutoResizeTextarea from "./AutoResizeTextarea";
 
 export default function BlockKingdom({
     block,
@@ -83,7 +84,9 @@ export default function BlockKingdom({
                     </Grid>
                     <Box mb={4} px={4}>
                         <Text mb={1}>Nội dung</Text>
-                        <Textarea
+                        <AutoResizeTextarea
+                            rows={6}
+                            minH="160px"
                             value={block.content}
                             onChange={(e) =>
                                 updateBlockData(index, "content", e.target.value)
@@ -162,6 +165,7 @@ export default function BlockKingdom({
                             <Box
                                 as="button"
                                 type="button"
+                                role="group"
                                 w="100%"
                                 h="40px"
                                 onClick={() => backgroundInputRef.current?.click()}
@@ -173,8 +177,8 @@ export default function BlockKingdom({
                                 cursor="pointer"
                                 transition="all 0.2s"
                                 _hover={{
-                                    borderColor: "rgba(148, 163, 184, 0.5)",
-                                    bg: "#252d4a"
+                                    borderColor: "#38A169",
+                                    bg: "#38A169"
                                 }}
                                 textAlign="left"
                                 display="flex"
@@ -182,13 +186,14 @@ export default function BlockKingdom({
                                 overflow="hidden"
                             >
                                 <Text
-                                    color={block.img_file ? (isDark ? "#e2e8f0" : "#0f172a") : (isDark ? "#94a3b8" : "#64748b")}
+                                    color={block.img_file || block.img_url ? (isDark ? "#e2e8f0" : "#000000") : (isDark ? "#94a3b8" : "#64748b")}
+                                    _groupHover={{ color: "#ffffff" }}
                                     fontSize="sm"
                                     whiteSpace="nowrap"
                                     overflow="hidden"
                                     textOverflow="ellipsis"
                                 >
-                                    {block.img_file?.name || "Chọn ảnh..."}
+                                    {block.img_file?.name || (typeof block.img_url === "string" ? block.img_url.split("/").pop() : null) || "Chọn ảnh..."}
                                 </Text>
                             </Box>
                             <input
@@ -209,7 +214,9 @@ export default function BlockKingdom({
                     </Grid>
                     <Box mb={4} px={4}>
                         <Text mb={1}>Nội dung</Text>
-                        <Textarea
+                        <AutoResizeTextarea
+                            rows={6}
+                            minH="160px"
                             value={block.content}
                             onChange={(e) =>
                                 updateBlockData(index, "content", e.target.value)
@@ -288,6 +295,7 @@ export default function BlockKingdom({
                             <Box
                                 as="button"
                                 type="button"
+                                role="group"
                                 w="100%"
                                 h="40px"
                                 onClick={() => backgroundInputRef.current?.click()}
@@ -299,8 +307,8 @@ export default function BlockKingdom({
                                 cursor="pointer"
                                 transition="all 0.2s"
                                 _hover={{
-                                    borderColor: "rgba(148, 163, 184, 0.5)",
-                                    bg: "#252d4a"
+                                    borderColor: "#38A169",
+                                    bg: "#38A169"
                                 }}
                                 textAlign="left"
                                 display="flex"
@@ -308,13 +316,14 @@ export default function BlockKingdom({
                                 overflow="hidden"
                             >
                                 <Text
-                                    color={block.img_file ? (isDark ? "#e2e8f0" : "#0f172a") : (isDark ? "#94a3b8" : "#64748b")}
+                                    color={block.img_file || block.img_url ? (isDark ? "#e2e8f0" : "#000000") : (isDark ? "#94a3b8" : "#64748b")}
+                                    _groupHover={{ color: "#ffffff" }}
                                     fontSize="sm"
                                     whiteSpace="nowrap"
                                     overflow="hidden"
                                     textOverflow="ellipsis"
                                 >
-                                    {block.img_file?.name || "Chọn ảnh..."}
+                                    {block.img_file?.name || (typeof block.img_url === "string" ? block.img_url.split("/").pop() : null) || "Chọn ảnh..."}
                                 </Text>
                             </Box>
                             <input
@@ -335,7 +344,9 @@ export default function BlockKingdom({
                     </Grid>
                     <Box mb={4} px={4}>
                         <Text mb={1}>Nội dung</Text>
-                        <Textarea
+                        <AutoResizeTextarea
+                            rows={6}
+                            minH="160px"
                             value={block.content}
                             onChange={(e) =>
                                 updateBlockData(index, "content", e.target.value)
@@ -414,6 +425,7 @@ export default function BlockKingdom({
                             <Box
                                 as="button"
                                 type="button"
+                                role="group"
                                 w="100%"
                                 h="40px"
                                 onClick={() => backgroundInputRef.current?.click()}
@@ -425,8 +437,8 @@ export default function BlockKingdom({
                                 cursor="pointer"
                                 transition="all 0.2s"
                                 _hover={{
-                                    borderColor: "rgba(148, 163, 184, 0.5)",
-                                    bg: isDark ? "#252d4a" : "#eef2f7"
+                                    borderColor: "#38A169",
+                                    bg: "#38A169"
                                 }}
                                 textAlign="left"
                                 display="flex"
@@ -434,13 +446,14 @@ export default function BlockKingdom({
                                 overflow="hidden"
                             >
                                 <Text
-                                    color={block.img_file ? (isDark ? "#e2e8f0" : "#0f172a") : (isDark ? "#94a3b8" : "#64748b")}
+                                    color={block.img_file || block.img_url ? (isDark ? "#e2e8f0" : "#000000") : (isDark ? "#94a3b8" : "#64748b")}
+                                    _groupHover={{ color: "#ffffff" }}
                                     fontSize="sm"
                                     whiteSpace="nowrap"
                                     overflow="hidden"
                                     textOverflow="ellipsis"
                                 >
-                                    {block.img_file?.name || "Chọn ảnh..."}
+                                    {block.img_file?.name || (typeof block.img_url === "string" ? block.img_url.split("/").pop() : null) || "Chọn ảnh..."}
                                 </Text>
                             </Box>
                             <input
@@ -461,7 +474,9 @@ export default function BlockKingdom({
                     </Grid>
                     <Box mb={4} px={4}>
                         <Text mb={1}>Nội dung</Text>
-                        <Textarea
+                        <AutoResizeTextarea
+                            rows={6}
+                            minH="160px"
                             value={block.content}
                             onChange={(e) =>
                                 updateBlockData(index, "content", e.target.value)

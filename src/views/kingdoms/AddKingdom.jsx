@@ -420,7 +420,7 @@ export default function AddKingdom() {
                                         }}
                                         textAlign="left"
                                     >
-                                        <Text fontSize="sm" color={backgroundFileName ? "#e2e8f0" : "#94a3b8"}>
+                                        <Text fontSize="sm" color={backgroundFileName ? (isDark ? "#e2e8f0" : "#000000") : (isDark ? "#94a3b8" : "#64748b")}>
                                             {backgroundFileName || "Chọn ảnh nền..."}
                                         </Text>
                                     </Box>
@@ -452,7 +452,7 @@ export default function AddKingdom() {
                                         }}
                                         textAlign="left"
                                     >
-                                        <Text fontSize="sm" color={thumbnailFileName ? "#e2e8f0" : "#94a3b8"}>
+                                        <Text fontSize="sm" color={thumbnailFileName ? (isDark ? "#e2e8f0" : "#000000") : (isDark ? "#94a3b8" : "#64748b")}>
                                             {thumbnailFileName || "Chọn ảnh đại diện..."}
                                         </Text>
                                     </Box>
@@ -752,9 +752,9 @@ export default function AddKingdom() {
                     <Button
                         mt={4}
                         w="100%"
-                        bg="#2a69ac"
+                        bg="#38A169"
                         color="white"
-                        _hover={{ bg: "#2c5282" }}
+                        _hover={{ bg: "#2F855A" }}
                         onClick={submitForm}
                     >
                         Hoàn thành
