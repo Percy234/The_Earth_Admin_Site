@@ -145,7 +145,7 @@ export default function TopNavbar({
                         border='1px solid'
                         borderColor={isDark ? '#1d2a5e' : '#d2d9e7'}
                         borderRadius='lg'
-                        bg={isDark ? '#111a3a' : '#ffffff'}
+                        bg={isDark ? '#141e33' : '#ffffff'}
                     >
                         <HiOutlineSearch size={18} color={isDark ? '#cbd5e1' : '#475569'} />
                         <Input
@@ -173,7 +173,7 @@ export default function TopNavbar({
                             top="calc(100% + 6px)"
                             left={0}
                             right={0}
-                            bg={isDark ? '#111a3a' : '#ffffff'}
+                            bg={isDark ? '#141e33' : '#ffffff'}
                             border='1px solid'
                             borderColor={isDark ? '#1d2a5e' : '#d2d9e7'}
                             borderRadius='lg'

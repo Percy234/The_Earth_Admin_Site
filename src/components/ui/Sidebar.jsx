@@ -241,7 +241,7 @@ function SidebarContent({ links, isDark, onNavigate }) {
         <Box
             w={{ base: '100%', md: '240px' }}
             minH="100vh"
-            bg={isDark ? '#0b1026' : '#ffffff'}
+            bg={isDark ? '#141e33' : '#ffffff'}
             color={isDark ? '#f8fafc' : '#0f172a'}
             borderRight={isDark ? "2px solid rgba(255, 255, 255, 0.15)" : "3px solid black"}
             display="flex"
@@ -378,7 +378,7 @@ export default function Sidebar({ links }) {
                     onClick={onOpen}
                     aria-label="Open menu"
                     size="sm"
-                    bg={isDark ? '#111a3a' : '#ffffff'}
+                    bg={isDark ? '#141e33' : '#ffffff'}
                     color={isDark ? '#e2e8f0' : '#0f172a'}
                     border={isDark ? "2px solid white" : "2.5px solid black"}
                     borderRadius="0"

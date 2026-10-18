@@ -35,7 +35,7 @@ export default function TaxonomyCard({
     return (
         <Box
             key={itemId}
-            bg={isDark ? "#111a3a" : "white"}
+            bg={isDark ? "#141e33" : "white"}
             borderRadius="0"
             boxShadow={isDark ? "4px 4px 0px 0px white" : "4px 4px 0px 0px black"}
             border={isDark ? "2px solid white" : "3px solid black"}

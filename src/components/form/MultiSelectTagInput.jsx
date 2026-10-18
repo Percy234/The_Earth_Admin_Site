@@ -177,7 +177,7 @@ export default function MultiSelectTagInput({
                     mt={1}
                     maxH="220px"
                     overflowY="auto"
-                    bg={isDark ? "#111a3a" : "#ffffff"}
+                    bg={isDark ? "#141e33" : "#ffffff"}
                     border="1px solid"
                     borderColor={isDark ? "#1d2a5e" : "#e2e8f0"}
                     borderRadius="md"

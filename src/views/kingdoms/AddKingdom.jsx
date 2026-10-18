@@ -363,7 +363,7 @@ export default function AddKingdom() {
                         w="100%"
                         p={6}
                         borderRadius="lg"
-                        bg={isDark ? "#111a3a" : "#ffffff"}
+                        bg={isDark ? "#141e33" : "#ffffff"}
                     >
                         <Heading fontWeight="bold" mb={4} fontSize={"2xl"} textAlign="center">Thông tin cơ bản</Heading>
                         <Stack spacing={6}>
@@ -506,7 +506,7 @@ export default function AddKingdom() {
                                                                     : "transparent",
                                                             boxShadow:
                                                                 formData.cell_type === option.value
-                                                                    ? "inset 0 0 0 4px #111a3a"
+                                                                    ? "inset 0 0 0 4px #141e33"
                                                                     : "none",
                                                         }}
                                                     />
@@ -551,7 +551,7 @@ export default function AddKingdom() {
                                                                     : "transparent",
                                                             boxShadow:
                                                                 formData.nutrition_mode === option.value
-                                                                    ? "inset 0 0 0 4px #111a3a"
+                                                                    ? "inset 0 0 0 4px #141e33"
                                                                     : "none",
                                                         }}
                                                     />
@@ -602,7 +602,7 @@ export default function AddKingdom() {
                                                                     : "transparent",
                                                             boxShadow:
                                                                 formData.reproduction_type === option.value
-                                                                    ? "inset 0 0 0 4px #111a3a"
+                                                                    ? "inset 0 0 0 4px #141e33"
                                                                     : "none",
                                                         }}
                                                     />
@@ -691,7 +691,7 @@ export default function AddKingdom() {
                         w="100%"
                         mt={4}
                         borderRadius="lg"
-                        bg={isDark ? "#111a3a" : "#ffffff"}
+                        bg={isDark ? "#141e33" : "#ffffff"}
                         border={isDark ? "none" : "1px solid #e2e8f0"}
                     >
                         <Text

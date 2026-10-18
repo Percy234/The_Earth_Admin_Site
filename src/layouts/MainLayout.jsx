@@ -40,7 +40,7 @@ export default function MainLayout() {
     };
 
     return (
-        <Box minH="100vh" bg={isDark ? '#0b1026' : '#f5f7fb'}>
+        <Box minH="100vh" bg={isDark ? '#141e33' : '#f5f7fb'}>
             <Box display="flex" minH="100vh">
                 <Sidebar links={links} />
 
@@ -51,7 +51,7 @@ export default function MainLayout() {
                         left={{ base: 0, md: '240px' }}
                         right={0}
                         zIndex={10}
-                        bg={isDark ? '#0b1026' : '#f5f7fb'}
+                        bg={isDark ? '#141e33' : '#f5f7fb'}
                         borderBottom="1px solid"
                         borderColor={isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.05)'}
                     >

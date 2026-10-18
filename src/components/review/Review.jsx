@@ -30,7 +30,7 @@ export default function Review({
             w="100%"
             display="flex"
             flexDirection="column"
-            bgColor="#111a3a"
+            bgColor="#141e33"
             borderRadius="lg"
             overflow="hidden"
             position="relative"

@@ -265,7 +265,7 @@ export default function ManageKingdoms() {
                 </Box>
             ) : activeConfig.list.length === 0 ? (
                 <Box
-                    bg={isDark ? "#111a3a" : "white"}
+                    bg={isDark ? "#141e33" : "white"}
                     p={8}
                     borderRadius="0"
                     textAlign="center"

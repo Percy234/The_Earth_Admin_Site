@@ -24,7 +24,7 @@ export default function BlockKingdom({
                     w="100%"
                     mt={6}
                     borderRadius="lg"
-                    bg={isDark ? "#111a3a" : "#ffffff"}
+                    bg={isDark ? "#141e33" : "#ffffff"}
                 >
                     <Text fontSize="2xl" fontWeight="bold" p={6} textAlign="center" borderRadius="lg">Văn Bản</Text>
                     <Box mb={4} px={4}>
@@ -104,7 +104,7 @@ export default function BlockKingdom({
                     w="100%"
                     mt={6}
                     borderRadius="lg"
-                    bg={isDark ? "#111a3a" : "#ffffff"}
+                    bg={isDark ? "#141e33" : "#ffffff"}
                 >
                     <Text fontSize="2xl" fontWeight="bold" p={6} textAlign="center" borderRadius="lg">Ảnh + Văn Bản</Text>
                     <Box mb={4} px={4}>
@@ -234,7 +234,7 @@ export default function BlockKingdom({
                     w="100%"
                     mt={6}
                     borderRadius="lg"
-                    bg={isDark ? "#111a3a" : "#ffffff"}
+                    bg={isDark ? "#141e33" : "#ffffff"}
                 >
                     <Text fontSize="2xl" fontWeight="bold" p={6} textAlign="center" borderRadius="lg">Văn Bản + Ảnh</Text>
                     <Box mb={4} px={4}>
@@ -364,7 +364,7 @@ export default function BlockKingdom({
                     w="100%"
                     mt={6}
                     borderRadius="lg"
-                    bg={isDark ? "#111a3a" : "#ffffff"}
+                    bg={isDark ? "#141e33" : "#ffffff"}
                 >
                     <Text fontSize="2xl" fontWeight="bold" p={6} textAlign="center" borderRadius="lg">Ảnh Trên + Văn Bản Dưới</Text>
                     <Box mb={4} px={4}>

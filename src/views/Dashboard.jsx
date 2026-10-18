@@ -25,7 +25,7 @@ export default function Dashboard() {
                     {/* Thẻ 1: Tổng số giới */}
                     <Box
                         p={5}
-                        bg={isDark ? "#111a3a" : "white"}
+                        bg={isDark ? "#141e33" : "white"}
                         border="1px solid"
                         borderColor={isDark ? "#1d2a5e" : "#e2e8f0"}
                         borderRadius="18px"
@@ -62,7 +62,7 @@ export default function Dashboard() {
                     {/* Thẻ 2: Tổng số loài */}
                     <Box
                         p={5}
-                        bg={isDark ? "#111a3a" : "white"}
+                        bg={isDark ? "#141e33" : "white"}
                         border="1px solid"
                         borderColor={isDark ? "#1d2a5e" : "#e2e8f0"}
                         borderRadius="18px"
@@ -99,7 +99,7 @@ export default function Dashboard() {
                     {/* Thẻ 3: Môi trường sống */}
                     <Box
                         p={5}
-                        bg={isDark ? "#111a3a" : "white"}
+                        bg={isDark ? "#141e33" : "white"}
                         border="1px solid"
                         borderColor={isDark ? "#1d2a5e" : "#e2e8f0"}
                         borderRadius="18px"
@@ -137,7 +137,7 @@ export default function Dashboard() {
                     {/* Thẻ 4: Kỷ nguyên đa dạng nhất */}
                     <Box
                         p={5}
-                        bg={isDark ? "#111a3a" : "white"}
+                        bg={isDark ? "#141e33" : "white"}
                         border="1px solid"
                         borderColor={isDark ? "#1d2a5e" : "#e2e8f0"}
                         borderRadius="18px"
@@ -184,7 +184,7 @@ export default function Dashboard() {
                         minH={{ base: '320px', xl: '0' }}
                         minW={0}
                         w="100%"
-                        bg={isDark ? '#111a3a' : '#ffffff'}
+                        bg={isDark ? '#141e33' : '#ffffff'}
                         border="1px solid"
                         borderColor={isDark ? '#1d2a5e' : '#e2e8f0'}
                         borderRadius="18px"
@@ -198,7 +198,7 @@ export default function Dashboard() {
                         minH={{ base: '320px', xl: '0' }}
                         minW={0}
                         w="100%"
-                        bg={isDark ? '#111a3a' : '#ffffff'}
+                        bg={isDark ? '#141e33' : '#ffffff'}
                         border="1px solid"
                         borderColor={isDark ? '#1d2a5e' : '#e2e8f0'}
                         borderRadius="18px"
@@ -212,7 +212,7 @@ export default function Dashboard() {
                         minH={{ base: '320px', xl: '0' }}
                         minW={0}
                         w="100%"
-                        bg={isDark ? '#111a3a' : '#ffffff'}
+                        bg={isDark ? '#141e33' : '#ffffff'}
                         border="1px solid"
                         borderColor={isDark ? '#1d2a5e' : '#e2e8f0'}
                         borderRadius="18px"
@@ -227,7 +227,7 @@ export default function Dashboard() {
                         minH={{ base: '320px', xl: '0' }}
                         minW={0}
                         w="100%"
-                        bg={isDark ? '#111a3a' : '#ffffff'}
+                        bg={isDark ? '#141e33' : '#ffffff'}
                         border="1px solid"
                         borderColor={isDark ? '#1d2a5e' : '#e2e8f0'}
                         borderRadius="18px"
